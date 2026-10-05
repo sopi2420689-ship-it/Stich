@@ -1,0 +1,162 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}StitchSync Rider{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              navy: "#0A192F",
+              gold: "#D4AF37",
+            },
+            fontFamily: {
+              sans: ["DM Sans", "sans-serif"],
+              serif: ["Playfair Display", "serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    {% block extra_head %}{% endblock %}
+  </head>
+
+  <body class="min-h-screen flex flex-col bg-[#F7F8FA] font-sans">
+    <!-- ===================================================== -->
+    <!-- RIDER HEADER                                          -->
+    <!-- ===================================================== -->
+
+    <header class="sticky top-0 z-50 bg-navy border-b border-white/10">
+      <div class="max-w-[1200px] mx-auto px-4">
+        <div class="h-16 flex items-center justify-between gap-6">
+          <!-- LOGO -->
+          <a
+            href="{% url 'riders:dashboard' %}"
+            class="flex items-center gap-3 shrink-0"
+          >
+            <span class="font-serif font-bold text-xl text-white">
+              StitchSync
+            </span>
+
+            <span
+              class="hidden sm:inline-flex border border-gold/60 text-gold rounded-full px-3 py-1 text-[10px] font-bold tracking-wider"
+            >
+              RIDER
+            </span>
+          </a>
+
+          <!-- CENTER NAV -->
+          <nav class="hidden lg:flex flex-1 justify-center items-center gap-1">
+            <a
+              href="{% url 'riders:dashboard' %}"
+              class="px-4 py-2 rounded-lg text-sm font-semibold transition {% if request.resolver_match.url_name == 'dashboard' %} bg-white/10 text-white {% else %} text-white/75 hover:text-white hover:bg-white/5 {% endif %}"
+            >
+              Dashboard
+            </a>
+
+            <a
+              href="{% url 'riders:jobs' %}"
+              class="px-4 py-2 rounded-lg text-sm font-semibold transition {% if request.resolver_match.url_name == 'jobs' or request.resolver_match.url_name == 'job_detail' %} bg-white/10 text-white {% else %} text-white/75 hover:text-white hover:bg-white/5 {% endif %}"
+            >
+              Jobs
+            </a>
+
+            <a
+              href="{% url 'riders:messages' %}"
+              class="px-4 py-2 rounded-lg text-sm font-semibold transition {% if request.resolver_match.url_name == 'messages' %} bg-white/10 text-white {% else %} text-white/75 hover:text-white hover:bg-white/5 {% endif %}"
+            >
+              Messages
+            </a>
+
+            <a
+              href="{% url 'riders:history' %}"
+              class="px-4 py-2 rounded-lg text-sm font-semibold transition {% if request.resolver_match.url_name == 'history' %} bg-white/10 text-white {% else %} text-white/75 hover:text-white hover:bg-white/5 {% endif %}"
+            >
+              History
+            </a>
+
+            <a
+              href="{% url 'riders:profile' %}"
+              class="px-4 py-2 rounded-lg text-sm font-semibold transition {% if request.resolver_match.url_name == 'profile' %} bg-white/10 text-white {% else %} text-white/75 hover:text-white hover:bg-white/5 {% endif %}"
+            >
+              Profile
+            </a>
+          </nav>
+
+          <!-- RIGHT -->
+          <div class="flex items-center gap-3 shrink-0">
+            <div class="hidden md:block text-right">
+  <p class="text-sm text-white font-semibold">
+    {{ request.user.get_full_name }}
+  </p>
+
+  <p class="text-[10px] text-white/50">
+    {{ request.user.email }} · Delivery Rider
+  </p>
+</div>
+
+            {% firstof request.user.first_name request.user.get_full_name request.user.email as rider_display_name %}
+            <div class="w-9 h-9 rounded-full bg-gold text-navy flex items-center justify-center font-bold">
+              {{ rider_display_name|first|upper }}
+            </div>
+
+            <a href="{% url 'core:logout' %}" class="text-sm text-white/70 hover:text-white transition">
+              Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===================================================== -->
+    <!-- PAGE CONTENT                                          -->
+    <!-- IMPORTANT: block name is "content"                    -->
+    <!-- ===================================================== -->
+
+    <main class="flex-1">
+      <div class="max-w-[1200px] mx-auto px-4 py-8">
+        {% block content %} {% endblock %}
+      </div>
+    </main>
+
+    <!-- ===================================================== -->
+    <!-- USE YOUR EXISTING CENTRAL FOOTER                      -->
+    <!-- ===================================================== -->
+
+    {% include "components/footer.html" %}
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+      });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

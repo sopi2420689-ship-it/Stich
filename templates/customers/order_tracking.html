@@ -1,137 +1,225 @@
-{% extends 'customers/base.html' %}
-{% load static %}
-
-{% block title %}Order Tracking {{ order.order_id }} | StitchSync{% endblock %}
-
-{% block content %}
+{% extends 'customers/base.html' %} {% load static %} {% block title %}Order
+Tracking {{ order.order_id }} | StitchSync{% endblock %} {% block content %}
 <div class="max-w-[1200px] mx-auto py-8 px-4 space-y-6">
-  
   <!-- Page Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-      <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tracking Reference</div>
-      <h1 class="text-3xl font-bold text-navy font-serif mt-0.5">Order Tracking</h1>
+      <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+        Tracking Reference
+      </div>
+      <h1 class="text-3xl font-bold text-navy font-serif mt-0.5">
+        Order Tracking
+      </h1>
       <p class="text-gray-500 text-sm mt-1">
-        <span class="font-semibold text-navy">{{ order.order_id }}</span> · {{ order.product_name }} ({{ order.shop_name }})
+        <span class="font-semibold text-navy">{{ order.order_id }}</span> · {{
+        order.product_name }} ({{ order.shop_name }})
       </p>
     </div>
-    
+
     <div class="flex items-center gap-3">
-      <a href="{% url 'customers:download_receipt' order.order_id %}" class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-navy hover:bg-gray-50 transition shadow-xs flex items-center gap-2">
+      <a
+        href="{% url 'customers:download_receipt' order.order_id %}"
+        class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-navy hover:bg-gray-50 transition shadow-xs flex items-center gap-2"
+      >
         📥 Download Receipt
       </a>
     </div>
   </div>
 
-  <div class="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
-    
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
     <!-- Left Column: Status, Trial, and PIN -->
-    <div class="space-y-6">
-      
+    <div class="space-y-6 lg:col-span-2">
       <!-- Production Status Stepper Card -->
-      <div class="bg-white border border-gray-200/90 rounded-2xl p-6 shadow-sm space-y-6">
-        <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+      <div
+        class="bg-white border border-gray-200/90 rounded-2xl p-6 shadow-sm space-y-6"
+      >
+        <div
+          class="flex items-center justify-between pb-4 border-b border-gray-100"
+        >
           <h3 class="text-navy font-bold text-base">Production Status</h3>
-          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full uppercase tracking-wider">{{ order.status }}</span>
+          <span
+            class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full uppercase tracking-wider"
+            >{{ order.status }}</span
+          >
         </div>
 
         <!-- Progress Steps -->
         <div class="py-2">
-          <div class="grid grid-cols-6 gap-2 text-center text-xs">
+          <div class="grid grid-cols-5 gap-2 text-center text-xs">
+            <!-- 1. Pending / Order Placed -->
             <div class="space-y-2">
-              <div class="w-8 h-8 mx-auto rounded-full bg-navy text-white font-bold grid place-items-center text-xs shadow-sm">1</div>
-              <span class="text-navy font-semibold block text-[11px]">Accepted</span>
+              <div
+                class="w-8 h-8 mx-auto rounded-full bg-navy text-white font-bold grid place-items-center text-xs shadow-sm"
+              >
+                1
+              </div>
+
+              <span class="text-navy font-semibold block text-[11px]">
+                Placed
+              </span>
             </div>
+
+            <!-- 2. Accepted -->
             <div class="space-y-2">
-              <div class="w-8 h-8 mx-auto rounded-full {% if order.status != 'Pending' %}bg-navy text-white{% else %}bg-gray-100 text-gray-400{% endif %} font-bold grid place-items-center text-xs">2</div>
-              <span class="text-gray-600 block text-[11px]">Cutting</span>
+              <div
+                class="w-8 h-8 mx-auto rounded-full {% if order.status == 'Accepted' or order.status == 'In Production' or order.status == 'Ready' or order.status == 'Delivered' %} bg-navy text-white {% else %} bg-gray-100 text-gray-400 {% endif %} font-bold grid place-items-center text-xs"
+              >
+                2
+              </div>
+
+              <span
+                class="{% if order.status == 'Accepted' or order.status == 'In Production' or order.status == 'Ready' or order.status == 'Delivered' %} text-navy font-semibold {% else %} text-gray-400 {% endif %} block text-[11px]"
+              >
+                Accepted
+              </span>
             </div>
+
+            <!-- 3. In Production -->
             <div class="space-y-2">
-              <div class="w-8 h-8 mx-auto rounded-full bg-gray-100 text-gray-400 font-bold grid place-items-center text-xs">3</div>
-              <span class="text-gray-400 block text-[11px]">Stitching</span>
+              <div
+                class="w-8 h-8 mx-auto rounded-full {% if order.status == 'In Production' or order.status == 'Ready' or order.status == 'Delivered' %} bg-navy text-white {% else %} bg-gray-100 text-gray-400 {% endif %} font-bold grid place-items-center text-xs"
+              >
+                3
+              </div>
+
+              <span
+                class="{% if order.status == 'In Production' or order.status == 'Ready' or order.status == 'Delivered' %} text-navy font-semibold {% else %} text-gray-400 {% endif %} block text-[11px]"
+              >
+                Production
+              </span>
             </div>
+
+            <!-- 4. Ready -->
             <div class="space-y-2">
-              <div class="w-8 h-8 mx-auto rounded-full bg-gray-100 text-gray-400 font-bold grid place-items-center text-xs">4</div>
-              <span class="text-gray-400 block text-[11px]">Trial</span>
+              <div
+                class="w-8 h-8 mx-auto rounded-full {% if order.status == 'Ready' or order.status == 'Delivered' %} bg-navy text-white {% else %} bg-gray-100 text-gray-400 {% endif %} font-bold grid place-items-center text-xs"
+              >
+                4
+              </div>
+
+              <span
+                class="{% if order.status == 'Ready' or order.status == 'Delivered' %} text-navy font-semibold {% else %} text-gray-400 {% endif %} block text-[11px]"
+              >
+                Ready
+              </span>
             </div>
+
+            <!-- 5. Delivered -->
             <div class="space-y-2">
-              <div class="w-8 h-8 mx-auto rounded-full bg-gray-100 text-gray-400 font-bold grid place-items-center text-xs">5</div>
-              <span class="text-gray-400 block text-[11px]">Ready</span>
-            </div>
-            <div class="space-y-2">
-              <div class="w-8 h-8 mx-auto rounded-full bg-gray-100 text-gray-400 font-bold grid place-items-center text-xs">6</div>
-              <span class="text-gray-400 block text-[11px]">Delivered</span>
+              <div
+                class="w-8 h-8 mx-auto rounded-full {% if order.status == 'Delivered' %} bg-emerald-600 text-white {% else %} bg-gray-100 text-gray-400 {% endif %} font-bold grid place-items-center text-xs"
+              >
+                5
+              </div>
+
+              <span
+                class="{% if order.status == 'Delivered' %} text-emerald-700 font-semibold {% else %} text-gray-400 {% endif %} block text-[11px]"
+              >
+                Delivered
+              </span>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Fitting Trial Box (If requested) -->
-      {% if order.trial_requested %}
-      <div class="bg-purple-50/60 border border-purple-200 rounded-2xl p-6 shadow-sm space-y-2">
-        <div class="flex items-center gap-2 text-purple-900 font-bold text-sm">
-          <span>📅 Fitting Trial Scheduled</span>
-          <span class="px-2 py-0.5 bg-purple-200 text-purple-800 text-[10px] uppercase rounded-full">Active</span>
+        <!-- Fitting Trial Box (If requested) -->
+        {% if order.trial_requested %}
+        <div
+          class="bg-purple-50/60 border border-purple-200 rounded-2xl p-6 shadow-sm space-y-2"
+        >
+          <div
+            class="flex items-center gap-2 text-purple-900 font-bold text-sm"
+          >
+            <span>📅 Fitting Trial Scheduled</span>
+            <span
+              class="px-2 py-0.5 bg-purple-200 text-purple-800 text-[10px] uppercase rounded-full"
+              >Active</span
+            >
+          </div>
+          <p class="text-xs text-purple-800/80 leading-relaxed">
+            The tailor will propose a fitting date soon. Please be available at
+            your address; production continues after the test trial fit.
+          </p>
         </div>
-        <p class="text-xs text-purple-800/80 leading-relaxed">
-          The tailor will propose a fitting date soon. Please be available at your address; production continues after the test trial fit.
-        </p>
-      </div>
-      {% endif %}
+        {% endif %}
 
-      <!-- Secure Delivery PIN Card -->
-      <!-- Secure Delivery PIN Card -->
-<div class="bg-slate-50 border border-gray-200/90 rounded-2xl p-6 shadow-sm space-y-3">
-  <div>
-    <h4 class="font-bold text-navy text-sm">Your Delivery PIN</h4>
-    <p class="text-xs text-gray-500 mt-0.5">Share this secure 4-digit code with the rider upon arrival to confirm receipt.</p>
-  </div>
-  <div class="flex gap-3 pt-1">
-    {% if order.delivery_pin %}
-      {% for digit in order.delivery_pin %}
-        <span class="w-12 h-12 rounded-xl bg-navy text-gold font-serif font-bold text-xl grid place-items-center shadow-sm">{{ digit }}</span>
-      {% endfor %}
-    {% else %}
-      <span class="text-xs text-gray-400">PIN will be generated shortly.</span>
-    {% endif %}
-  </div>
-</div>
-
-    </div>
-
-    <!-- Right Column: Tailor Chat Widget Preview -->
-    <div class="bg-white border border-gray-200/90 rounded-2xl p-6 shadow-sm space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-full bg-navy text-gold font-bold text-xs grid place-items-center">TS</div>
+        <!-- Secure Delivery PIN Card -->
+        <!-- Secure Delivery PIN Card -->
+        <div
+          class="bg-slate-50 border border-gray-200/90 rounded-2xl p-6 shadow-sm space-y-3"
+        >
           <div>
-            <div class="font-bold text-navy text-xs">{{ order.shop_name }}</div>
-            <div class="text-[10px] text-emerald-600 font-medium">Online now</div>
+            <h4 class="font-bold text-navy text-sm">Your Delivery PIN</h4>
+            <p class="text-xs text-gray-500 mt-0.5">
+              Share this secure 4-digit code with the rider upon arrival to
+              confirm receipt.
+            </p>
+          </div>
+          <div class="flex gap-3 pt-1">
+            {% if order.delivery_pin %} {% for digit in order.delivery_pin %}
+            <span
+              class="w-12 h-12 rounded-xl bg-navy text-gold font-serif font-bold text-xl grid place-items-center shadow-sm"
+              >{{ digit }}</span
+            >
+            {% endfor %} {% else %}
+            <span class="text-xs text-gray-400"
+              >PIN will be generated shortly.</span
+            >
+            {% endif %}
           </div>
         </div>
       </div>
 
-      <!-- Messages Stream -->
-      <div class="space-y-3 py-2 max-h-64 overflow-y-auto text-xs">
-        <div class="flex items-start gap-2">
-          <div class="bg-gray-100 text-gray-800 p-3 rounded-2xl rounded-bl-sm">
-            Hi! Your custom order has been received and logged into our queue. ✂️
+      <!-- Right Column: Tailor Chat Widget Preview -->
+      <div
+        class="lg:col-span-1 lg:sticky lg:top-24 bg-white border border-gray-200/90 rounded-2xl p-6 shadow-sm space-y-4"
+      >
+        <div
+          class="flex items-center justify-between pb-3 border-b border-gray-100"
+        >
+          <div class="flex items-center gap-2.5">
+            <div
+              class="w-8 h-8 rounded-full bg-navy text-gold font-bold text-xs grid place-items-center"
+            >
+              TS
+            </div>
+            <div>
+              <div class="font-bold text-navy text-xs">
+                {{ order.shop_name }}
+              </div>
+              <div class="text-[10px] text-emerald-600 font-medium">
+                Online now
+              </div>
+            </div>
           </div>
         </div>
-        <div class="flex items-start justify-end gap-2">
-          <div class="bg-navy text-white p-3 rounded-2xl rounded-br-sm">
-            Great, please make sure the fit is slim fit as requested.
-          </div>
-        </div>
-      </div>
 
-      <div class="pt-2">
-        <a href="{% url 'customers:chat' %}" class="block w-full py-2.5 bg-navy text-white text-center rounded-xl text-xs font-semibold hover:bg-slate-800 transition shadow-sm">
-          Open Full Chat
-        </a>
+        <!-- Messages Stream -->
+        <div class="space-y-3 py-2 max-h-64 overflow-y-auto text-xs">
+          <div class="flex items-start gap-2">
+            <div
+              class="bg-gray-100 text-gray-800 p-3 rounded-2xl rounded-bl-sm"
+            >
+              Hi! Your custom order has been received and logged into our queue.
+              ✂️
+            </div>
+          </div>
+          <div class="flex items-start justify-end gap-2">
+            <div class="bg-navy text-white p-3 rounded-2xl rounded-br-sm">
+              Great, please make sure the fit is slim fit as requested.
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <a
+            href="{% url 'customers:chat' %}"
+            class="block w-full py-2.5 bg-navy text-white text-center rounded-xl text-xs font-semibold hover:bg-slate-800 transition shadow-sm"
+          >
+            Open Full Chat
+          </a>
+        </div>
       </div>
     </div>
-
   </div>
+  {% endblock %}
 </div>
-{% endblock %}

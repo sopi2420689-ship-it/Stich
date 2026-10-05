@@ -1,0 +1,348 @@
+{% extends "riders/base_rider.html" %}
+
+{% block title %}Rider Profile | StitchSync{% endblock %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+    {% comment %} {% include "riders/_nav.html" %} {% endcomment %}
+
+
+    <div class="mb-6">
+
+        <p class="text-gold text-xs font-bold
+                  uppercase tracking-wider">
+            Account
+        </p>
+
+        <h1 class="text-3xl font-serif
+                   font-bold text-navy mt-1">
+            Rider Profile
+        </h1>
+
+        <p class="text-sm text-gray-500 mt-1">
+            Manage your vehicle, availability and account.
+        </p>
+
+    </div>
+
+
+    {% for message in messages %}
+
+        <div class="mb-4 rounded-lg border px-4 py-3
+                    text-sm
+
+            {% if message.tags == 'success' %}
+                bg-green-50 border-green-200 text-green-700
+            {% else %}
+                bg-red-50 border-red-200 text-red-700
+            {% endif %}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+
+    <!-- PROFILE TOP -->
+    <div class="bg-white border border-gray-200
+                rounded-xl p-5 mb-4">
+
+        <div class="flex flex-col sm:flex-row
+                    sm:items-center gap-4">
+
+            <div class="w-16 h-16 rounded-xl
+                        bg-gold text-navy flex items-center
+                        justify-center text-xl font-bold">
+
+                {{ request.user.first_name|first|upper }}
+
+            </div>
+
+
+            <div class="flex-1">
+
+                <h2 class="text-xl font-serif
+                           font-bold text-navy">
+
+                    {{ request.user.get_full_name|default:request.user.email }}
+
+                </h2>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    {{ request.user.email }}
+                </p>
+
+                <p class="text-xs text-gray-400 mt-1">
+                    {{ user_profile.vehicle_type|default:"Vehicle not added" }}
+                </p>
+
+            </div>
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <input type="hidden"
+                       name="action"
+                       value="availability">
+
+
+                <button type="submit"
+                        class="px-4 py-2 rounded-full
+                               text-sm font-semibold
+
+                        {% if rider_profile.is_online %}
+                            bg-green-50 text-green-700
+                        {% else %}
+                            bg-gray-100 text-gray-600
+                        {% endif %}">
+
+                    {% if rider_profile.is_online %}
+                        ● Available
+                    {% else %}
+                        ● Offline
+                    {% endif %}
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- RIDER INFORMATION -->
+    <form method="POST"
+          class="bg-white border border-gray-200
+                 rounded-xl p-6 mb-4">
+
+        {% csrf_token %}
+
+        <input type="hidden"
+               name="action"
+               value="profile">
+
+
+        <h2 class="text-lg font-serif
+                   font-bold text-navy mb-5">
+            Vehicle Information
+        </h2>
+
+
+        <div class="grid sm:grid-cols-2 gap-4">
+
+            <div>
+
+                <label class="block text-xs
+                              font-semibold text-gray-600 mb-1.5">
+                    Phone
+                </label>
+
+                <input type="text"
+                       name="phone"
+                       value="{{ user_profile.phone|default:'' }}"
+                       class="w-full h-10 rounded-lg
+                              border border-gray-200 px-3
+                              text-sm outline-none
+                              focus:border-navy">
+
+            </div>
+
+
+            <div>
+
+                <label class="block text-xs
+                              font-semibold text-gray-600 mb-1.5">
+                    Vehicle Type
+                </label>
+
+                <select name="vehicle_type"
+                        class="w-full h-10 rounded-lg
+                               border border-gray-200 px-3
+                               bg-white text-sm outline-none">
+
+                    <option value="Motorcycle"
+                        {% if user_profile.vehicle_type == "Motorcycle" %}
+                            selected
+                        {% endif %}>
+                        Motorcycle
+                    </option>
+
+                    <option value="Bicycle"
+                        {% if user_profile.vehicle_type == "Bicycle" %}
+                            selected
+                        {% endif %}>
+                        Bicycle
+                    </option>
+
+                    <option value="Car"
+                        {% if user_profile.vehicle_type == "Car" %}
+                            selected
+                        {% endif %}>
+                        Car
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label class="block text-xs
+                              font-semibold text-gray-600 mb-1.5">
+                    License Plate
+                </label>
+
+                <input type="text"
+                       name="license_plate"
+                       value="{{ rider_profile.license_plate }}"
+                       placeholder="DHK-GA-4521"
+                       class="w-full h-10 rounded-lg
+                              border border-gray-200 px-3
+                              text-sm outline-none
+                              focus:border-navy">
+
+            </div>
+
+
+            <div>
+
+                <label class="block text-xs
+                              font-semibold text-gray-600 mb-1.5">
+                    Vehicle Model
+                </label>
+
+                <input type="text"
+                       name="vehicle_model"
+                       value="{{ rider_profile.vehicle_model }}"
+                       placeholder="Honda CB 150"
+                       class="w-full h-10 rounded-lg
+                              border border-gray-200 px-3
+                              text-sm outline-none
+                              focus:border-navy">
+
+            </div>
+
+
+            <div class="sm:col-span-2">
+
+                <label class="block text-xs
+                              font-semibold text-gray-600 mb-1.5">
+                    Service Area
+                </label>
+
+                <input type="text"
+                       name="service_area"
+                       value="{{ rider_profile.service_area }}"
+                       placeholder="Gulshan, Banani, Dhanmondi"
+                       class="w-full h-10 rounded-lg
+                              border border-gray-200 px-3
+                              text-sm outline-none
+                              focus:border-navy">
+
+            </div>
+
+        </div>
+
+
+        <button type="submit"
+                class="mt-5 bg-navy text-white
+                       px-6 py-2.5 rounded-lg
+                       text-sm font-semibold">
+            Save Changes
+        </button>
+
+    </form>
+
+
+    <!-- PASSWORD -->
+    <form method="POST"
+          class="bg-white border border-gray-200
+                 rounded-xl p-6">
+
+        {% csrf_token %}
+
+        <input type="hidden"
+               name="action"
+               value="password">
+
+
+        <h2 class="text-lg font-serif
+                   font-bold text-navy mb-5">
+            Change Password
+        </h2>
+
+
+        <div class="grid md:grid-cols-3 gap-4">
+
+            <div>
+
+                <label class="block text-xs font-semibold
+                              text-gray-600 mb-1.5">
+                    Current Password
+                </label>
+
+                <input type="password"
+                       name="current_password"
+                       required
+                       class="w-full h-10 rounded-lg
+                              border border-gray-200 px-3
+                              text-sm outline-none">
+
+            </div>
+
+
+            <div>
+
+                <label class="block text-xs font-semibold
+                              text-gray-600 mb-1.5">
+                    New Password
+                </label>
+
+                <input type="password"
+                       name="new_password"
+                       required
+                       class="w-full h-10 rounded-lg
+                              border border-gray-200 px-3
+                              text-sm outline-none">
+
+            </div>
+
+
+            <div>
+
+                <label class="block text-xs font-semibold
+                              text-gray-600 mb-1.5">
+                    Confirm Password
+                </label>
+
+                <input type="password"
+                       name="confirm_password"
+                       required
+                       class="w-full h-10 rounded-lg
+                              border border-gray-200 px-3
+                              text-sm outline-none">
+
+            </div>
+
+        </div>
+
+
+        <button type="submit"
+                class="mt-5 px-6 py-2.5 rounded-lg
+                       bg-gray-100 text-navy
+                       text-sm font-semibold hover:bg-gray-200">
+            Update Password
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

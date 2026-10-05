@@ -1,0 +1,1811 @@
+{% extends "tailors/base.html" %}
+
+{% block title %}
+    Designs | {{ shop_name }}
+{% endblock %}
+
+{% block content %}
+
+
+    <style>
+
+        body {
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(59, 130, 246, 0.04),
+                    transparent 30%
+                ),
+                #f8fafc;
+        }
+
+        .design-card {
+            transition: all 0.2s ease;
+        }
+
+        .design-card:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 15px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .modal-bg {
+    backdrop-filter: blur(6px);
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 430px;
+
+    max-height: none;
+    overflow: visible;
+
+    border-radius: 20px;
+
+    animation: modalIn 0.2s ease-out;
+
+    box-shadow:
+        0 25px 60px rgba(15, 23, 42, 0.20);
+}
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform: scale(0.96)
+                   translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1)
+                   translateY(0);
+    }
+
+}
+
+        input,
+        textarea {
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+
+            border-color: #64748b;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(100, 116, 139, 0.08);
+
+            outline: none;
+        }
+
+        .toast {
+            animation: toastIn 0.25s ease;
+        }
+
+        @keyframes toastIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+    </style>
+
+
+<!-- ========================================================= -->
+<!-- TOAST -->
+<!-- ========================================================= -->
+
+<div id="toast"
+     class="hidden
+            fixed
+            top-20
+            right-5
+            z-[100]
+            px-4
+            py-3
+            rounded-xl
+            bg-slate-900
+            text-white
+            text-xs
+            font-semibold
+            shadow-xl">
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- MAIN -->
+<!-- ========================================================= -->
+
+ <div class="max-w-7xl mx-auto px-5 py-8">
+
+
+    <!-- HEADER -->
+
+    <div class="flex flex-col
+                md:flex-row
+                md:items-end
+                md:justify-between
+                gap-4
+                mb-6">
+
+
+        <div>
+
+            <p class="text-[10px]
+                      uppercase
+                      tracking-wider
+                      font-bold
+                      text-slate-400">
+
+                Design Management
+
+            </p>
+
+
+            <h2 class="text-3xl
+                       font-bold
+                       text-slate-900
+                       mt-1">
+
+                All Designs
+
+            </h2>
+
+
+            <p class="text-xs
+                      text-slate-500
+                      mt-1">
+
+                Manage the designs available in your customer catalog.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- ADD DESIGN -->
+
+        <a href="{% url 'tailors:add_design' %}"
+           class="inline-flex
+                  items-center
+                  justify-center
+                  gap-2
+                  px-4
+                  py-2.5
+                  rounded-xl
+                  bg-slate-900
+                  text-white
+                  text-xs
+                  font-bold
+                  hover:bg-slate-800
+                  shadow-sm
+                  transition">
+
+            <span class="text-base">
+                +
+            </span>
+
+            Add New Design
+
+        </a>
+
+    </div>
+
+
+
+    <!-- ========================================================= -->
+    <!-- SEARCH -->
+    <!-- ========================================================= -->
+
+    <div class="mb-6">
+
+        <form method="GET"
+              class="relative
+                     max-w-md">
+
+            <span class="absolute
+                         left-3.5
+                         top-1/2
+                         -translate-y-1/2
+                         text-slate-400">
+
+                🔍
+
+            </span>
+
+
+            <input
+                type="text"
+                name="search"
+                value="{{ search }}"
+                placeholder="Search designs..."
+                class="w-full
+                       pl-10
+                       pr-4
+                       py-2.5
+                       rounded-xl
+                       bg-white
+                       border
+                       border-slate-200
+                       text-xs
+                       outline-none"
+            >
+
+        </form>
+
+    </div>
+
+
+
+    <!-- ========================================================= -->
+    <!-- DESIGN GRID -->
+    <!-- ========================================================= -->
+
+    <div id="designGrid"
+         class="grid
+                grid-cols-1
+                sm:grid-cols-2
+                lg:grid-cols-4
+                gap-4">
+
+
+        {% for design in designs %}
+
+
+        <!-- ===================================================== -->
+        <!-- DESIGN CARD -->
+        <!-- ===================================================== -->
+
+        <div id="design-card-{{ design.id }}"
+             class="design-card
+                    bg-white
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    overflow-hidden
+                    shadow-sm">
+
+
+            <!-- IMAGE -->
+
+            <div class="relative
+                        h-48
+                        bg-slate-100
+                        overflow-hidden">
+
+
+                {% if design.image %}
+
+                <img
+                    id="image-{{ design.id }}"
+                    src="{{ design.image.url }}"
+                    alt="{{ design.title }}"
+                    class="w-full
+                           h-full
+                           object-cover"
+                >
+
+                {% else %}
+
+                <div id="image-{{ design.id }}"
+                     class="w-full
+                            h-full
+                            flex
+                            flex-col
+                            items-center
+                            justify-center
+                            text-slate-400">
+
+                    <span class="text-3xl">
+                        👕
+                    </span>
+
+                    <span class="text-xs mt-2">
+                        No image
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+
+
+                <!-- PRICE -->
+
+                <div class="absolute
+                            top-3
+                            right-3
+                            px-3
+                            py-1.5
+                            rounded-full
+                            bg-white
+                            shadow-sm">
+
+                    <span id="price-{{ design.id }}"
+                          class="text-xs
+                                 font-bold
+                                 text-slate-900">
+
+                        ৳ {{ design.price }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CONTENT -->
+
+            <div class="p-4">
+
+
+                <!-- TITLE -->
+
+                <h3 id="title-{{ design.id }}"
+                    class="font-bold
+                           text-sm
+                           text-slate-900
+                           truncate">
+
+                    {{ design.title }}
+
+                </h3>
+
+
+
+                <!-- DESCRIPTION -->
+
+                {% if design.description %}
+
+                <p id="description-{{ design.id }}"
+                   class="text-[11px]
+                          text-slate-500
+                          mt-1
+                          line-clamp-2
+                          min-h-[32px]">
+
+                    {{ design.description }}
+
+                </p>
+
+                {% else %}
+
+                <p id="description-{{ design.id }}"
+                   class="text-[11px]
+                          text-slate-400
+                          italic
+                          mt-1
+                          min-h-[32px]">
+
+                    No description added.
+
+                </p>
+
+                {% endif %}
+
+
+
+                <!-- DATE -->
+
+                <div class="border-t
+                            border-slate-100
+                            mt-3
+                            pt-3">
+
+                    <p class="text-[10px]
+                              text-slate-400">
+
+                        Added
+                        {{ design.created_at|date:"d M Y" }}
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="grid
+                            grid-cols-2
+                            gap-2
+                            mt-3">
+
+
+                    <!-- ================================================= -->
+                    <!-- EDIT BUTTON -->
+                    <!-- ================================================= -->
+
+                    <button
+                            type="button"
+
+                            data-id="{{ design.id }}"
+                            data-title="{{ design.title|escape }}"
+                            data-price="{{ design.price }}"
+                            data-description="{{ design.description|default:''|escape }}"
+                            data-image="{% if design.image %}{{ design.image.url }}{% endif %}"
+
+                            onclick="openEditModal(this)"
+
+                            class="edit-btn
+                                py-2
+                                rounded-lg
+                                bg-slate-100
+                                text-slate-700
+                                text-xs
+                                font-bold
+                                hover:bg-slate-200
+                                transition">
+
+                            ✏️ Edit
+
+                    </button>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- DELETE BUTTON -->
+                    <!-- ================================================= -->
+
+                    <button
+                    type="button"
+                    data-design-id="{{ design.id }}"
+                    onclick="deleteDesign(this.dataset.designId)"
+                    class="py-2
+                        rounded-lg
+                        bg-red-50
+                        text-red-600
+                        text-xs
+                        font-bold
+                        hover:bg-red-100
+                        transition">
+
+                    🗑️ Delete
+
+                </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% empty %}
+
+
+        <!-- EMPTY -->
+
+        <div class="col-span-full
+                    bg-white
+                    border
+                    border-dashed
+                    border-slate-300
+                    rounded-2xl
+                    py-16
+                    text-center">
+
+            <div class="text-4xl mb-3">
+                👕
+            </div>
+
+            <h3 class="font-bold
+                       text-sm
+                       text-slate-800">
+
+                No designs found
+
+            </h3>
+
+            <p class="text-xs
+                      text-slate-400
+                      mt-1">
+
+                Add your first clothing design.
+
+            </p>
+
+        </div>
+
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- EDIT DESIGN MODAL -->
+<!-- ========================================================= -->
+
+<div id="editModal"
+     class="hidden
+            fixed
+            inset-0
+            z-50
+            modal-bg
+            items-center
+            justify-center
+            p-3
+            overflow-hidden">
+
+
+    <!-- MODAL BOX -->
+
+    <div class="modal-box
+                bg-white
+                shadow-2xl">
+
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
+
+        <div class="flex
+                    items-center
+                    justify-between
+                    px-5
+                    py-4
+                    border-b
+                    border-slate-100">
+
+
+            <div>
+
+                <h3 class="text-lg
+                           font-bold
+                           text-slate-900">
+
+                    Edit Design
+
+                </h3>
+
+                <p class="text-[10px]
+                          text-slate-400
+                          mt-0.5">
+
+                    Update your design information.
+
+                </p>
+
+            </div>
+
+
+            <!-- CLOSE BUTTON -->
+
+            <button
+                type="button"
+                onclick="closeEditModal()"
+                class="w-8
+                       h-8
+                       flex
+                       items-center
+                       justify-center
+                       rounded-lg
+                       bg-slate-100
+                       text-slate-500
+                       hover:bg-slate-200
+                       transition">
+
+                ✕
+
+            </button>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- FORM -->
+        <!-- ================================================= -->
+
+        <form id="editForm"
+              enctype="multipart/form-data"
+              class="p-5">
+
+
+            <!-- ================================================= -->
+            <!-- DESIGN IMAGE -->
+            <!-- ================================================= -->
+
+            <div class="mb-4">
+
+                <div class="flex
+                            items-center
+                            justify-between
+                            mb-2">
+
+                    <label class="text-[11px]
+                                  font-bold
+                                  text-slate-700">
+
+                        Design Image
+
+                    </label>
+
+                    <span class="text-[9px]
+                                 text-slate-400">
+
+                        Optional
+
+                    </span>
+
+                </div>
+
+
+                <!-- IMAGE AREA -->
+
+                <label
+                    for="editImage"
+                    class="relative
+                           block
+                           cursor-pointer
+                           h-28
+                           rounded-xl
+                           overflow-hidden
+                           border
+                           border-dashed
+                           border-slate-300
+                           bg-slate-50
+                           hover:border-slate-400
+                           transition">
+
+
+                    <!-- IMAGE PREVIEW -->
+
+                    <img
+                        id="modalImagePreview"
+                        src=""
+                        alt="Design preview"
+                        class="hidden
+                               w-full
+                               h-full
+                               object-cover"
+                    >
+
+
+                    <!-- IMAGE PLACEHOLDER -->
+
+                    <div id="modalImagePlaceholder"
+                         class="absolute
+                                inset-0
+                                flex
+                                flex-col
+                                items-center
+                                justify-center">
+
+
+                        <div class="w-9
+                                    h-9
+                                    rounded-lg
+                                    bg-white
+                                    border
+                                    border-slate-200
+                                    flex
+                                    items-center
+                                    justify-center
+                                    text-lg
+                                    shadow-sm">
+
+                            📷
+
+                        </div>
+
+
+                        <p class="text-[11px]
+                                  font-semibold
+                                  text-slate-700
+                                  mt-2">
+
+                            Click to change image
+
+                        </p>
+
+
+                        <p class="text-[9px]
+                                  text-slate-400
+                                  mt-0.5">
+
+                            JPG, PNG or WEBP
+
+                        </p>
+
+                    </div>
+
+                </label>
+
+
+                <input
+                    type="file"
+                    id="editImage"
+                    name="image"
+                    accept="image/jpeg,image/png,image/webp"
+                    class="hidden"
+                >
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- DESIGN NAME -->
+            <!-- ================================================= -->
+
+            <div class="mb-4">
+
+                <label
+                    for="editTitle"
+                    class="block
+                           text-[11px]
+                           font-bold
+                           text-slate-700
+                           mb-1.5">
+
+                    Design Name
+
+                </label>
+
+
+                <input
+                    type="text"
+                    id="editTitle"
+                    name="title"
+                    required
+                    maxlength="200"
+                    placeholder="Enter design name"
+                    class="w-full
+                           px-3
+                           py-2.5
+                           rounded-xl
+                           border
+                           border-slate-200
+                           bg-white
+                           text-xs
+                           text-slate-800
+                           outline-none"
+                >
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- PRICE -->
+            <!-- ================================================= -->
+
+            <div class="mb-4">
+
+                <label
+                    for="editPrice"
+                    class="block
+                           text-[11px]
+                           font-bold
+                           text-slate-700
+                           mb-1.5">
+
+                    Price
+
+                </label>
+
+
+                <div class="flex">
+
+
+                    <!-- CURRENCY -->
+
+                    <div class="w-10
+                                flex
+                                items-center
+                                justify-center
+                                rounded-l-xl
+                                bg-slate-50
+                                border
+                                border-r-0
+                                border-slate-200">
+
+                        <span class="text-xs
+                                     font-semibold
+                                     text-slate-600">
+
+                            ৳
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- PRICE -->
+
+                    <input
+                        type="number"
+                        id="editPrice"
+                        name="price"
+                        min="0"
+                        step="0.01"
+                        required
+                        placeholder="0.00"
+                        class="flex-1
+                               px-3
+                               py-2.5
+                               rounded-r-xl
+                               border
+                               border-slate-200
+                               text-xs
+                               outline-none"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- DESCRIPTION -->
+            <!-- ================================================= -->
+
+            <div class="mb-5">
+
+                <div class="flex
+                            items-center
+                            justify-between
+                            mb-1.5">
+
+
+                    <label
+                        for="editDescription"
+                        class="text-[11px]
+                               font-bold
+                               text-slate-700">
+
+                        Description
+
+                    </label>
+
+
+                    <span
+                        id="editCharCount"
+                        class="text-[9px]
+                               text-slate-400">
+
+                        0 / 500
+
+                    </span>
+
+                </div>
+
+
+                <textarea
+                    id="editDescription"
+                    name="description"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Describe this design..."
+                    class="w-full
+                           px-3
+                           py-2.5
+                           rounded-xl
+                           border
+                           border-slate-200
+                           text-xs
+                           outline-none
+                           resize-none"
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- BUTTONS -->
+            <!-- ================================================= -->
+
+            <div class="flex
+                        gap-2.5
+                        pt-3
+                        border-t
+                        border-slate-100">
+
+
+                <!-- CANCEL -->
+
+                <button
+                    type="button"
+                    onclick="closeEditModal()"
+                    class="flex-1
+                           py-2.5
+                           rounded-xl
+                           border
+                           border-slate-200
+                           bg-white
+                           text-slate-600
+                           text-xs
+                           font-bold
+                           hover:bg-slate-50
+                           transition">
+
+                    Cancel
+
+                </button>
+
+
+                <!-- SAVE -->
+
+                <button
+                    type="submit"
+                    id="saveButton"
+                    class="flex-1
+                           py-2.5
+                           rounded-xl
+                           bg-slate-900
+                           text-white
+                           text-xs
+                           font-bold
+                           hover:bg-slate-800
+                           transition
+                           shadow-sm">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+    let currentDesignId = null;
+
+
+
+    /* =========================================================
+       OPEN EDIT MODAL
+    ========================================================= */
+
+    function openEditModal(button) {
+
+        currentDesignId =
+            button.dataset.id;
+
+
+        const title =
+            button.dataset.title || "";
+
+
+        const price =
+            button.dataset.price || "";
+
+
+        const description =
+            button.dataset.description || "";
+
+
+        const image =
+            button.dataset.image || "";
+
+
+
+        document.getElementById(
+            "editTitle"
+        ).value = title;
+
+
+        document.getElementById(
+            "editPrice"
+        ).value = price;
+
+
+        document.getElementById(
+            "editDescription"
+        ).value = description;
+
+
+
+        updateCharacterCount();
+
+
+
+        const modalImage =
+            document.getElementById(
+                "modalImagePreview"
+            );
+
+
+        const placeholder =
+            document.getElementById(
+                "modalImagePlaceholder"
+            );
+
+
+
+        if (image) {
+
+            modalImage.src = image;
+
+            modalImage.classList.remove(
+                "hidden"
+            );
+
+            placeholder.classList.add(
+                "hidden"
+            );
+
+        }
+
+        else {
+
+            modalImage.src = "";
+
+            modalImage.classList.add(
+                "hidden"
+            );
+
+            placeholder.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+
+        document.getElementById(
+            "editImage"
+        ).value = "";
+
+
+
+        const modal =
+            document.getElementById(
+                "editModal"
+            );
+
+
+        modal.classList.remove(
+            "hidden"
+        );
+
+
+        modal.classList.add(
+            "flex"
+        );
+
+
+        document.body.style.overflow =
+            "hidden";
+
+    }
+
+
+
+    /* =========================================================
+       CLOSE MODAL
+    ========================================================= */
+
+    function closeEditModal() {
+
+        const modal =
+            document.getElementById(
+                "editModal"
+            );
+
+
+        modal.classList.add(
+            "hidden"
+        );
+
+
+        modal.classList.remove(
+            "flex"
+        );
+
+
+        document.body.style.overflow =
+            "";
+
+
+        currentDesignId = null;
+
+    }
+
+
+
+    /* =========================================================
+       IMAGE PREVIEW
+    ========================================================= */
+
+    document
+        .getElementById("editImage")
+        .addEventListener(
+            "change",
+            function () {
+
+                const file =
+                    this.files[0];
+
+
+                if (!file) {
+                    return;
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    function (event) {
+
+                        const preview =
+                            document.getElementById(
+                                "modalImagePreview"
+                            );
+
+
+                        const placeholder =
+                            document.getElementById(
+                                "modalImagePlaceholder"
+                            );
+
+
+                        preview.src =
+                            event.target.result;
+
+
+                        preview.classList.remove(
+                            "hidden"
+                        );
+
+
+                        placeholder.classList.add(
+                            "hidden"
+                        );
+
+                    };
+
+
+                reader.readAsDataURL(file);
+
+            }
+        );
+
+
+
+    /* =========================================================
+       CHARACTER COUNTER
+    ========================================================= */
+
+    const descriptionInput =
+        document.getElementById(
+            "editDescription"
+        );
+
+
+    descriptionInput.addEventListener(
+        "input",
+        updateCharacterCount
+    );
+
+
+    function updateCharacterCount() {
+
+        const length =
+            descriptionInput.value.length;
+
+
+        document.getElementById(
+            "editCharCount"
+        ).textContent =
+            length + " / 500";
+
+    }
+
+
+
+    /* =========================================================
+       SAVE DESIGN
+    ========================================================= */
+
+    document
+        .getElementById("editForm")
+        .addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                if (!currentDesignId) {
+                    return;
+                }
+
+
+                const saveButton =
+                    document.getElementById(
+                        "saveButton"
+                    );
+
+
+                const formData =
+                    new FormData(this);
+
+
+                saveButton.disabled = true;
+
+
+                saveButton.textContent =
+                    "Saving...";
+
+
+                try {
+
+                    const updateUrl =
+                        "{% url 'tailors:update_design' 0 %}"
+                            .replace(
+                                "/0/",
+                                "/" +
+                                currentDesignId +
+                                "/"
+                            );
+
+
+                    const response =
+                        await fetch(
+                            updateUrl,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "X-CSRFToken":
+                                        getCSRFToken()
+                                },
+
+                                body: formData
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        showToast(
+                            data.error ||
+                            "Could not update design.",
+                            true
+                        );
+
+                        return;
+
+                    }
+
+
+
+                    updateDesignCard(
+                        data.design
+                    );
+
+
+                    closeEditModal();
+
+
+                    showToast(
+                        "Design updated successfully."
+                    );
+
+                }
+
+
+                catch (error) {
+
+                    console.error(error);
+
+
+                    showToast(
+                        "Something went wrong.",
+                        true
+                    );
+
+                }
+
+
+                finally {
+
+                    saveButton.disabled =
+                        false;
+
+
+                    saveButton.textContent =
+                        "Save Changes";
+
+                }
+
+            }
+        );
+
+
+
+    /* =========================================================
+       UPDATE DESIGN CARD
+    ========================================================= */
+
+    function updateDesignCard(design) {
+
+
+        /* TITLE */
+
+        const title =
+            document.getElementById(
+                "title-" + design.id
+            );
+
+
+        if (title) {
+
+            title.textContent =
+                design.title;
+
+        }
+
+
+
+        /* DESCRIPTION */
+
+        const description =
+            document.getElementById(
+                "description-" + design.id
+            );
+
+
+        if (description) {
+
+            description.textContent =
+                design.description ||
+                "No description added.";
+
+
+            if (design.description) {
+
+                description.classList.remove(
+                    "italic",
+                    "text-slate-400"
+                );
+
+                description.classList.add(
+                    "text-slate-500"
+                );
+
+            }
+
+            else {
+
+                description.classList.add(
+                    "italic",
+                    "text-slate-400"
+                );
+
+                description.classList.remove(
+                    "text-slate-500"
+                );
+
+            }
+
+        }
+
+
+
+        /* PRICE */
+
+        const price =
+            document.getElementById(
+                "price-" + design.id
+            );
+
+
+        if (price) {
+
+            price.textContent =
+                "৳ " + design.price;
+
+        }
+
+
+
+        /* IMAGE */
+
+        let image =
+            document.getElementById(
+                "image-" + design.id
+            );
+
+
+        if (design.image) {
+
+            if (
+                image &&
+                image.tagName.toLowerCase()
+                === "img"
+            ) {
+
+                image.src =
+                    design.image;
+
+                image.alt =
+                    design.title;
+
+            }
+
+            else if (image) {
+
+                const newImage =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                newImage.id =
+                    "image-" +
+                    design.id;
+
+
+                newImage.src =
+                    design.image;
+
+
+                newImage.alt =
+                    design.title;
+
+
+                newImage.className =
+                    "w-full h-full object-cover";
+
+
+                image.replaceWith(
+                    newImage
+                );
+
+            }
+
+        }
+
+
+
+        /* UPDATE EDIT BUTTON DATA */
+
+        const card =
+            document.getElementById(
+                "design-card-" + design.id
+            );
+
+
+        if (card) {
+
+            const editButton =
+                card.querySelector(
+                    ".edit-btn"
+                );
+
+            if (editButton) {
+
+                editButton.dataset.title =
+                    design.title;
+
+                editButton.dataset.price =
+                    design.price;
+
+                editButton.dataset.description =
+                    design.description || "";
+
+                editButton.dataset.image =
+                    design.image || "";
+
+            }
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       DELETE DESIGN
+    ========================================================= */
+
+    async function deleteDesign(id) {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to delete this design?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const deleteUrl =
+                "{% url 'tailors:delete_design' 0 %}"
+                    .replace(
+                        "/0/",
+                        "/" + id + "/"
+                    );
+
+
+            const response =
+                await fetch(
+                    deleteUrl,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "X-CSRFToken":
+                                getCSRFToken()
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                showToast(
+                    data.error ||
+                    "Could not delete design.",
+                    true
+                );
+
+                return;
+
+            }
+
+
+
+            const card =
+                document.getElementById(
+                    "design-card-" + id
+                );
+
+
+            if (card) {
+
+                card.style.opacity =
+                    "0";
+
+
+                card.style.transform =
+                    "scale(0.95)";
+
+
+                setTimeout(
+                    function () {
+
+                        card.remove();
+
+                    },
+                    200
+                );
+
+            }
+
+
+            showToast(
+                "Design deleted successfully."
+            );
+
+        }
+
+
+        catch (error) {
+
+            console.error(error);
+
+
+            showToast(
+                "Something went wrong.",
+                true
+            );
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       CSRF TOKEN
+    ========================================================= */
+
+    function getCSRFToken() {
+
+        const name =
+            "csrftoken=";
+
+
+        const cookies =
+            document.cookie.split(";");
+
+
+        for (
+            let cookie of cookies
+        ) {
+
+            cookie =
+                cookie.trim();
+
+
+            if (
+                cookie.indexOf(name)
+                === 0
+            ) {
+
+                return decodeURIComponent(
+                    cookie.substring(
+                        name.length
+                    )
+                );
+
+            }
+
+        }
+
+
+        return "";
+
+    }
+
+
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+
+    function showToast(
+        message,
+        error = false
+    ) {
+
+        const toast =
+            document.getElementById(
+                "toast"
+            );
+
+
+        toast.textContent =
+            message;
+
+
+        toast.classList.remove(
+            "hidden"
+        );
+
+
+        if (error) {
+
+            toast.classList.remove(
+                "bg-slate-900"
+            );
+
+            toast.classList.add(
+                "bg-red-600"
+            );
+
+        }
+
+        else {
+
+            toast.classList.remove(
+                "bg-red-600"
+            );
+
+            toast.classList.add(
+                "bg-slate-900"
+            );
+
+        }
+
+
+        setTimeout(
+            function () {
+
+                toast.classList.add(
+                    "hidden"
+                );
+
+            },
+            3000
+        );
+
+    }
+
+
+
+    /* =========================================================
+       CLOSE WHEN CLICKING OUTSIDE MODAL
+    ========================================================= */
+
+    document
+        .getElementById("editModal")
+        .addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target === this
+                ) {
+
+                    closeEditModal();
+
+                }
+
+            }
+        );
+
+
+
+    /* =========================================================
+       ESC KEY
+    ========================================================= */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                closeEditModal();
+
+            }
+
+        }
+    );
+
+</script>
+
+
+{% endblock %}

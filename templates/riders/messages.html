@@ -1,0 +1,286 @@
+{% extends "riders/base_rider.html" %}
+
+{% block title %}
+Rider Messages | StitchSync
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-6">
+
+    <p class="text-gold text-xs font-bold uppercase tracking-wider">
+        Communication
+    </p>
+
+    <h1 class="text-3xl font-serif font-bold text-navy mt-1">
+        Messages
+    </h1>
+
+    <p class="text-sm text-gray-500 mt-1">
+        Chat with customers and tailor shops.
+    </p>
+
+</div>
+
+
+<div class="bg-white border border-gray-200 rounded-xl overflow-hidden
+            grid md:grid-cols-[280px_1fr] min-h-[580px]">
+
+    <!-- LEFT: CONVERSATIONS -->
+    <aside class="border-r border-gray-200 bg-gray-50">
+
+        <div class="p-4 border-b border-gray-200">
+
+            <input
+                type="text"
+                placeholder="Search conversations..."
+                class="w-full h-10 rounded-lg
+                       border border-gray-200
+                       bg-white px-3
+                       text-sm outline-none
+                       focus:border-navy"
+            >
+
+        </div>
+
+
+        <div class="p-2 space-y-1">
+
+            <!-- DEMO CONVERSATION 1 -->
+            <a href="?conversation=Rahim Ahmed"
+               class="flex items-center gap-3
+                      p-3 rounded-lg transition
+
+               {% if conversation == 'Rahim Ahmed' %}
+                   bg-white shadow-sm
+               {% else %}
+                   hover:bg-white
+               {% endif %}">
+
+                <div class="w-10 h-10 rounded-full
+                            bg-gold text-navy
+                            flex items-center justify-center
+                            font-bold text-xs">
+                    RA
+                </div>
+
+                <div class="min-w-0">
+
+                    <p class="text-sm font-semibold text-navy">
+                        Rahim Ahmed
+                    </p>
+
+                    <p class="text-xs text-gray-500 truncate">
+                        Customer
+                    </p>
+
+                </div>
+
+            </a>
+
+
+            <!-- DEMO CONVERSATION 2 -->
+            <a href="?conversation=Regal Tailors"
+               class="flex items-center gap-3
+                      p-3 rounded-lg transition
+
+               {% if conversation == 'Regal Tailors' %}
+                   bg-white shadow-sm
+               {% else %}
+                   hover:bg-white
+               {% endif %}">
+
+                <div class="w-10 h-10 rounded-full
+                            bg-navy text-white
+                            flex items-center justify-center
+                            font-bold text-xs">
+                    RT
+                </div>
+
+                <div class="min-w-0">
+
+                    <p class="text-sm font-semibold text-navy">
+                        Regal Tailors
+                    </p>
+
+                    <p class="text-xs text-gray-500 truncate">
+                        Tailor Shop
+                    </p>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- RIGHT: CHAT -->
+    <section class="flex flex-col min-h-[580px]">
+
+        <!-- HEADER -->
+        <div class="h-16 px-5 border-b border-gray-200
+                    flex items-center gap-3">
+
+            <div class="w-10 h-10 rounded-full
+                        bg-gold text-navy
+                        flex items-center justify-center
+                        font-bold text-xs">
+
+                {{ conversation|slice:":1"|upper }}
+
+            </div>
+
+            <div>
+
+                <p class="text-sm font-semibold text-navy">
+                    {{ conversation }}
+                </p>
+
+                <p class="text-xs text-gray-500">
+                    StitchSync Conversation
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- MESSAGES -->
+        <div class="flex-1 overflow-y-auto p-5 bg-[#FAFAF9]"
+             id="chat-body">
+
+            {% for item in messages_list %}
+
+                {% if item.sender == "rider" %}
+
+                    <div class="flex justify-end mb-3">
+
+                        <div class="max-w-[70%]
+                                    bg-navy text-white
+                                    rounded-2xl rounded-br-sm
+                                    px-4 py-2.5">
+
+                            <p class="text-sm">
+                                {{ item.text }}
+                            </p>
+
+                            <p class="text-[10px] text-white/50 mt-1">
+                                {{ item.created_at|date:"g:i A" }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="flex justify-start mb-3">
+
+                        <div class="max-w-[70%]
+                                    bg-white border border-gray-200
+                                    rounded-2xl rounded-bl-sm
+                                    px-4 py-2.5">
+
+                            <p class="text-sm text-gray-800">
+                                {{ item.text }}
+                            </p>
+
+                            <p class="text-[10px] text-gray-400 mt-1">
+                                {{ item.created_at|date:"g:i A" }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            {% empty %}
+
+                <div class="h-full flex items-center justify-center">
+
+                    <div class="text-center">
+
+                        <i data-lucide="message-circle"
+                           class="w-10 h-10
+                                  mx-auto text-gray-300">
+                        </i>
+
+                        <p class="text-sm text-gray-500 mt-3">
+                            No messages yet.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- SEND -->
+        <form method="POST"
+              class="p-3 border-t border-gray-200
+                     bg-white flex gap-2">
+
+            {% csrf_token %}
+
+            <input type="hidden"
+                   name="conversation"
+                   value="{{ conversation }}">
+
+            <input
+                type="text"
+                name="message"
+                placeholder="Type a message..."
+                required
+                autocomplete="off"
+                class="flex-1 h-11 rounded-lg
+                       border border-gray-200
+                       px-4 text-sm
+                       outline-none
+                       focus:border-navy"
+            >
+
+            <button
+                type="submit"
+                class="w-11 h-11 rounded-lg
+                       bg-navy text-gold
+                       flex items-center
+                       justify-center
+                       hover:bg-slate-800
+                       transition">
+
+                <i data-lucide="send"
+                   class="w-4 h-4">
+                </i>
+
+            </button>
+
+        </form>
+
+    </section>
+
+</div>
+
+
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const chat =
+            document.getElementById("chat-body");
+
+        if (chat) {
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+    }
+);
+</script>
+
+{% endblock %}

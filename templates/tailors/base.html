@@ -1,0 +1,460 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}{{ shop_name }} | Tailor Panel{% endblock %}
+    </title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0A192F',
+                        gold: '#D4AF37',
+                        'gold-soft': '#f4ecd0'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    {% block extra_css %}{% endblock %}
+    <style>
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    /* =========================
+       TAILOR HEADER
+    ========================== */
+
+    .tailor-header {
+        height: 64px !important;
+        min-height: 64px !important;
+        max-height: 64px !important;
+    }
+
+    .tailor-header-inner {
+        width: 100%;
+        max-width: 1450px;
+
+        height: 64px;
+        margin: 0 auto;
+
+        padding-left: 24px;
+        padding-right: 24px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 16px;
+        white-space: nowrap;
+    }
+
+    /* =========================
+       DESKTOP NAV
+    ========================== */
+
+    .tailor-nav-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        height: 38px;
+        padding: 0 14px;
+
+        border-radius: 10px;
+
+        color: #aeb8c7;
+
+        font-size: 15px;
+        font-weight: 500;
+
+        text-decoration: none;
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease;
+
+        white-space: nowrap;
+    }
+
+    .tailor-nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tailor-nav-link.active {
+        color: white;
+        background: #24344d;
+    }
+
+    /* =========================
+       MOBILE NAV
+    ========================== */
+
+    .mobile-nav-link {
+        display: inline-flex;
+        align-items: center;
+
+        height: 34px;
+        padding: 0 14px;
+
+        border-radius: 8px;
+
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.05);
+
+        font-size: 14px;
+        text-decoration: none;
+
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .mobile-nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* =========================
+       PAGE
+    ========================== */
+
+    .tailor-page-content {
+        min-height: calc(100vh - 64px);
+    }
+</style>
+</head>
+
+<body class="bg-gray-100 text-gray-800 min-h-screen m-0">
+
+    <!-- ========================================================= -->
+    <!-- TAILOR HEADER - FIXED 64PX -->
+    <!-- ========================================================= -->
+
+    <header
+        class="tailor-header sticky top-0 z-50 bg-[#0A192F] text-white shadow-lg"
+    >
+
+        <div class="tailor-header-inner">
+
+            <!-- ========================= -->
+            <!-- LOGO -->
+            <!-- ========================= -->
+
+            <a
+                href="{% url 'tailors:dashboard' %}"
+                class="flex items-center gap-3 shrink-0"
+            >
+
+                {% comment %} <!-- Scissors -->
+                <div
+                    class="w-9 h-9 rounded-lg bg-[#D4AF37]
+                           flex items-center justify-center shrink-0"
+                >
+                    <i
+                        data-lucide="scissors"
+                        class="w-5 h-5 text-[#0A192F]"
+                    ></i>
+                </div> {% endcomment %}
+
+                <!-- Brand -->
+                <div class="flex items-center gap-3">
+
+                    <span
+                        class="font-serif text-2xl font-bold text-white whitespace-nowrap"
+                    >
+                        StitchSync
+                    </span>
+
+                    <span
+                        class="hidden sm:inline-flex
+                               items-center
+                               text-[11px]
+                               uppercase
+                               tracking-widest
+                               text-[#D4AF37]
+                               border
+                               border-[#D4AF37]/50
+                               rounded-full
+                               px-3
+                               py-1
+                               whitespace-nowrap"
+                    >
+                        TAILOR
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- ========================= -->
+            <!-- DESKTOP NAVIGATION -->
+            <!-- ========================= -->
+
+            <nav
+                class="hidden lg:flex items-center gap-1 shrink-0"
+            >
+
+                <!-- Dashboard -->
+                <a
+                    href="{% url 'tailors:dashboard' %}"
+                    class="tailor-nav-link
+                    {% if request.resolver_match.url_name == 'dashboard' %}
+                        active
+                    {% endif %}"
+                >
+                    Dashboard
+                </a>
+
+
+                <!-- Orders -->
+                <a
+                    href="{% url 'tailors:orders' %}"
+                    class="tailor-nav-link
+                    {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_detail' %}
+                        active
+                    {% endif %}"
+                >
+                    Orders
+                </a>
+
+
+                <!-- Production -->
+                <a
+                    href="{% url 'tailors:production' %}"
+                    class="tailor-nav-link
+                    {% if request.resolver_match.url_name == 'production' %}
+                        active
+                    {% endif %}"
+                >
+                    Production
+                </a>
+
+
+                <!-- Designs -->
+                <a
+                    href="{% url 'tailors:designs' %}"
+                    class="tailor-nav-link
+                    {% if request.resolver_match.url_name == 'designs' or request.resolver_match.url_name == 'add_design' %}
+                        active
+                    {% endif %}"
+                >
+                    Designs
+                </a>
+
+
+                <!-- Profile -->
+                <a
+                    href="{% url 'tailors:profile' %}"
+                    class="tailor-nav-link
+                    {% if request.resolver_match.url_name == 'profile' %}
+                        active
+                    {% endif %}"
+                >
+                    Shop Profile
+                </a>
+
+
+                <!-- Chat -->
+                <a
+                    href="{% url 'tailors:chat' %}"
+                    class="tailor-nav-link
+                    {% if request.resolver_match.url_name == 'chat' %}
+                        active
+                    {% endif %}"
+                >
+                    Chat
+                </a>
+
+            </nav>
+
+
+            <!-- ========================= -->
+            <!-- RIGHT SIDE -->
+            <!-- ========================= -->
+
+            <div class="flex items-center gap-3 shrink-0">
+
+                <!-- Notification -->
+                <button
+                    type="button"
+                    class="relative w-9 h-9
+                           flex items-center justify-center
+                           text-gray-300
+                           hover:text-white
+                           transition"
+                >
+
+                    <i
+                        data-lucide="bell"
+                        class="w-5 h-5"
+                    ></i>
+
+                    <span
+                        class="absolute
+                               top-1
+                               right-1
+                               w-2
+                               h-2
+                               bg-[#D4AF37]
+                               rounded-full"
+                    ></span>
+
+                </button>
+
+
+                <!-- Avatar -->
+                <div
+                    class="w-9 h-9
+                           rounded-full
+                           bg-[#D4AF37]
+                           flex items-center justify-center
+                           text-[#0A192F]
+                           font-bold
+                           text-lg
+                           shrink-0"
+                >
+                    {% firstof request.user.first_name request.user.get_full_name request.user.email request.user.username as tailor_name %}
+{{ tailor_name|first|upper }}
+                </div>
+
+
+                <!-- Logout -->
+                <form
+                    action="{% url 'core:logout' %}"
+                    method="POST"
+                    class="m-0 p-0"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        title="Logout"
+                        class="w-9 h-9
+                               flex items-center justify-center
+                               text-gray-300
+                               hover:text-white
+                               transition"
+                    >
+
+                        <i
+                            data-lucide="log-out"
+                            class="w-5 h-5"
+                        ></i>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- ========================================================= -->
+    <!-- MOBILE NAVIGATION -->
+    <!-- ========================================================= -->
+
+    <div class="lg:hidden bg-[#0A192F] border-t border-white/10">
+
+        <div
+            class="px-4 py-3
+                   flex gap-2
+                   overflow-x-auto
+                   scrollbar-hide"
+        >
+
+            <a
+                href="{% url 'tailors:dashboard' %}"
+                class="mobile-nav-link"
+            >
+                Dashboard
+            </a>
+
+            <a
+                href="{% url 'tailors:orders' %}"
+                class="mobile-nav-link"
+            >
+                Orders
+            </a>
+
+            <a
+                href="{% url 'tailors:production' %}"
+                class="mobile-nav-link"
+            >
+                Production
+            </a>
+
+            <a
+                href="{% url 'tailors:designs' %}"
+                class="mobile-nav-link"
+            >
+                Designs
+            </a>
+
+            <a
+                href="{% url 'tailors:profile' %}"
+                class="mobile-nav-link"
+            >
+                Profile
+            </a>
+
+            <a
+                href="{% url 'tailors:chat' %}"
+                class="mobile-nav-link"
+            >
+                Chat
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- PAGE CONTENT -->
+    <!-- ========================================================= -->
+
+    <main class="tailor-page-content">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+    <!-- =========================================================
+     FOOTER
+========================================================= -->
+
+
+{% include "components/footer.html" %}
+
+</body>
+</html>

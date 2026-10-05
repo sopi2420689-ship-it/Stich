@@ -1,15 +1,310 @@
-{% extends 'base/base.html' %}
+{% extends "riders/base_rider.html" %}
 
 {% block title %}Rider Dashboard | StitchSync{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto py-12 px-4 text-center">
-    <h1 class="text-3xl font-bold font-serif text-navy mb-4">Welcome, {{ user.username }}!</h1>
-    <p class="text-gray-500 mb-8">Your full Rider Dashboard is coming soon.</p>
-    
-    <!-- Emergency Logout Button -->
-    <a href="{% url 'core:logout' %}" class="bg-red-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600 transition">
-        Log Out
-    </a>
+
+<div class="max-w-7xl mx-auto">
+
+    {% comment %} {% include "riders/_nav.html" %} {% endcomment %}
+
+
+    <!-- HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center
+                sm:justify-between gap-4 mb-6">
+
+        <div>
+
+            <p class="text-gold text-xs font-bold uppercase tracking-wider">
+                Rider Portal
+            </p>
+
+            <h1 class="text-3xl font-serif font-bold text-navy mt-1">
+                Rider Dashboard
+            </h1>
+
+            <p class="text-sm text-gray-500 mt-1">
+                Welcome,
+                {{ request.user.get_full_name|default:request.user.email }}
+            </p>
+
+        </div>
+
+
+        <div class="inline-flex items-center gap-2
+                    px-4 py-2 rounded-full text-sm font-semibold
+                    {% if rider_profile.is_online %}
+                        bg-green-50 text-green-700
+                    {% else %}
+                        bg-gray-100 text-gray-500
+                    {% endif %}">
+
+            <span class="w-2 h-2 rounded-full
+                         {% if rider_profile.is_online %}
+                             bg-green-500
+                         {% else %}
+                             bg-gray-400
+                         {% endif %}">
+            </span>
+
+            {% if rider_profile.is_online %}
+                Online
+            {% else %}
+                Offline
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- STATS -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+        <!-- Assigned -->
+        <a href="{% url 'riders:jobs' %}"
+           class="bg-white border border-gray-200 rounded-xl
+                  p-5 hover:shadow-md transition">
+
+            <div class="flex items-center gap-4">
+
+                <div class="w-11 h-11 rounded-xl bg-blue-50
+                            text-blue-600 flex items-center justify-center">
+                    <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500">
+                        Assigned Jobs
+                    </p>
+
+                    <p class="text-2xl font-bold text-navy mt-1">
+                        {{ assigned_count }}
+                    </p>
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <!-- Pickups -->
+        <a href="{% url 'riders:jobs' %}?type=pickup"
+           class="bg-white border border-gray-200 rounded-xl
+                  p-5 hover:shadow-md transition">
+
+            <div class="flex items-center gap-4">
+
+                <div class="w-11 h-11 rounded-xl bg-amber-50
+                            text-amber-600 flex items-center justify-center">
+                    <i data-lucide="package-open" class="w-5 h-5"></i>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500">
+                        Pending Pickups
+                    </p>
+
+                    <p class="text-2xl font-bold text-navy mt-1">
+                        {{ pending_pickups_count }}
+                    </p>
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <!-- Deliveries -->
+        <a href="{% url 'riders:jobs' %}?type=delivery"
+           class="bg-white border border-gray-200 rounded-xl
+                  p-5 hover:shadow-md transition">
+
+            <div class="flex items-center gap-4">
+
+                <div class="w-11 h-11 rounded-xl bg-purple-50
+                            text-purple-600 flex items-center justify-center">
+                    <i data-lucide="map-pin" class="w-5 h-5"></i>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500">
+                        Pending Deliveries
+                    </p>
+
+                    <p class="text-2xl font-bold text-navy mt-1">
+                        {{ pending_deliveries_count }}
+                    </p>
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <!-- Completed -->
+        <a href="{% url 'riders:history' %}"
+           class="bg-white border border-gray-200 rounded-xl
+                  p-5 hover:shadow-md transition">
+
+            <div class="flex items-center gap-4">
+
+                <div class="w-11 h-11 rounded-xl bg-green-50
+                            text-green-600 flex items-center justify-center">
+                    <i data-lucide="circle-check" class="w-5 h-5"></i>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-500">
+                        Completed
+                    </p>
+
+                    <p class="text-2xl font-bold text-navy mt-1">
+                        {{ completed_count }}
+                    </p>
+                </div>
+
+            </div>
+
+        </a>
+
+    </div>
+
+
+    <!-- JOBS -->
+    <div class="flex items-center justify-between mb-4">
+
+        <div>
+            <h2 class="text-xl font-serif font-bold text-navy">
+                Assigned Jobs
+            </h2>
+
+            <p class="text-xs text-gray-500 mt-1">
+                Your current pickup and delivery work.
+            </p>
+        </div>
+
+        <a href="{% url 'riders:jobs' %}"
+           class="text-sm font-semibold text-navy hover:underline">
+            View all
+        </a>
+
+    </div>
+
+
+    {% if jobs %}
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+            {% for job in jobs %}
+
+                <div class="bg-white border border-gray-200
+                            rounded-xl p-5 hover:shadow-md transition">
+
+                    <div class="flex justify-between items-start gap-3">
+
+                        <div>
+
+                            {% if job.pickup_required and job.pickup_status != "fabric_delivered" %}
+
+                                <span class="inline-flex px-2.5 py-1 rounded-full
+                                             bg-amber-50 text-amber-700
+                                             text-[11px] font-semibold">
+                                    Pickup
+                                </span>
+
+                            {% elif job.delivery_required %}
+
+                                <span class="inline-flex px-2.5 py-1 rounded-full
+                                             bg-blue-50 text-blue-700
+                                             text-[11px] font-semibold">
+                                    Delivery
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                        <span class="text-[11px] text-gray-400">
+                            {{ job.order.order_id }}
+                        </span>
+
+                    </div>
+
+
+                    <h3 class="text-base font-bold text-navy mt-4">
+                        {{ job.order.customer_name }}
+                    </h3>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        {{ job.order.shop_name }}
+                        ·
+                        {{ job.order.product_name }}
+                    </p>
+
+
+                    {% if job.pickup_required and job.pickup_status != "fabric_delivered" %}
+
+                        <div class="mt-4 text-xs text-gray-500">
+                            Pickup status
+                        </div>
+
+                        <div class="mt-1 text-sm font-semibold text-amber-700">
+                            {{ job.get_pickup_status_display }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="mt-4 text-xs text-gray-500">
+                            Delivery status
+                        </div>
+
+                        <div class="mt-1 text-sm font-semibold text-blue-700">
+                            {{ job.get_delivery_status_display }}
+                        </div>
+
+                    {% endif %}
+
+
+                    <a href="{% url 'riders:job_detail' job.id %}"
+                       class="mt-5 w-full flex items-center justify-center
+                              gap-2 bg-navy text-white rounded-lg py-2.5
+                              text-sm font-semibold hover:bg-slate-800
+                              transition">
+
+                        View Details
+
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="bg-white border border-gray-200 rounded-xl
+                    p-10 text-center">
+
+            <i data-lucide="package-check"
+               class="w-10 h-10 mx-auto text-gray-300">
+            </i>
+
+            <h3 class="font-semibold text-navy mt-3">
+                No active jobs
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-1">
+                New assigned jobs will appear here.
+            </p>
+
+        </div>
+
+    {% endif %}
+
 </div>
+
 {% endblock %}

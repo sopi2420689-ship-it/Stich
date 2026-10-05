@@ -1,0 +1,1636 @@
+{% extends "tailors/base.html" %}
+
+{% block title %}
+    Chat | {{ shop_name }}
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    /* =====================================================
+       CHAT PAGE
+    ===================================================== */
+
+    .messages-page {
+        width: 100%;
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 45px 30px;
+    }
+
+
+    /* =====================================================
+       TITLE
+    ===================================================== */
+
+    .page-title {
+        margin: 0;
+
+        font-family:
+            Georgia,
+            "Times New Roman",
+            serif;
+
+        font-size: 38px;
+        line-height: 1.1;
+        font-weight: 700;
+
+        color: #071a35;
+    }
+
+
+    .page-subtitle {
+        margin-top: 9px;
+
+        font-size: 17px;
+
+        color: #64748b;
+    }
+
+
+    /* =====================================================
+       TWO SEPARATE CARDS
+    ===================================================== */
+
+    .messages-layout {
+        display: grid;
+
+        grid-template-columns:
+            300px
+            minmax(0, 1fr);
+
+        gap: 28px;
+
+        margin-top: 34px;
+
+        align-items: stretch;
+    }
+
+
+    /* =====================================================
+       CUSTOMER CARD
+    ===================================================== */
+
+    .customer-card {
+        height: 500px;
+
+        background: #ffffff;
+
+        border: 1px solid #e2e8f0;
+
+        border-radius: 18px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 5px 15px
+            rgba(15, 23, 42, 0.06);
+
+        display: flex;
+
+        flex-direction: column;
+    }
+
+
+    /* =====================================================
+       SEARCH
+    ===================================================== */
+
+    .customer-search {
+        padding: 12px;
+
+        flex-shrink: 0;
+
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+
+    .search-box {
+        position: relative;
+
+        width: 100%;
+    }
+
+
+    .search-icon {
+        position: absolute;
+
+        left: 12px;
+
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        color: #94a3b8;
+
+        pointer-events: none;
+
+        display: flex;
+
+        align-items: center;
+    }
+
+
+    .customer-search-input {
+        width: 100%;
+
+        height: 40px;
+
+        padding:
+            0
+            12px
+            0
+            38px;
+
+        border: 1px solid #e2e8f0;
+
+        border-radius: 10px;
+
+        background: #f8fafc;
+
+        color: #334155;
+
+        font-size: 13px;
+
+        outline: none;
+
+        transition: 0.2s ease;
+    }
+
+
+    .customer-search-input::placeholder {
+        color: #94a3b8;
+    }
+
+
+    .customer-search-input:focus {
+        background: #ffffff;
+
+        border-color: #94a3b8;
+
+        box-shadow:
+            0 0 0 3px
+            rgba(148, 163, 184, 0.10);
+    }
+
+
+    /* =====================================================
+       CUSTOMER LIST
+    ===================================================== */
+
+    .customer-list {
+        flex: 1;
+
+        min-height: 0;
+
+        overflow-y: auto;
+
+        padding: 6px 10px 10px;
+    }
+
+
+    .customer-list::-webkit-scrollbar {
+        width: 4px;
+    }
+
+
+    .customer-list::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+
+        border-radius: 20px;
+    }
+
+
+    /* =====================================================
+       CUSTOMER ITEM
+    ===================================================== */
+
+    .customer-item {
+        display: flex;
+
+        align-items: center;
+
+        gap: 14px;
+
+        width: 100%;
+
+        padding: 13px;
+
+        margin-bottom: 4px;
+
+        border-radius: 13px;
+
+        text-decoration: none;
+
+        cursor: pointer;
+
+        transition:
+            background 0.18s ease,
+            transform 0.18s ease;
+    }
+
+
+    .customer-item:hover {
+        background: #f8fafc;
+    }
+
+
+    .customer-item.active {
+        background: #f1f5f9;
+    }
+
+
+    /* =====================================================
+       CUSTOMER AVATAR
+    ===================================================== */
+
+    .customer-avatar {
+        width: 50px;
+
+        height: 50px;
+
+        flex-shrink: 0;
+
+        border-radius: 50%;
+
+        background: #000000;
+
+        color: #ffffff;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 16px;
+
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       CUSTOMER INFORMATION
+    ===================================================== */
+
+    .customer-information {
+        min-width: 0;
+
+        flex: 1;
+    }
+
+
+    .customer-name {
+        color: #071a35;
+
+        font-size: 16px;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+
+    .customer-preview {
+        margin-top: 4px;
+
+        color: #64748b;
+
+        font-size: 13px;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+
+    /* =====================================================
+       UNREAD DOT
+    ===================================================== */
+
+    .unread-dot {
+        width: 8px;
+
+        height: 8px;
+
+        flex-shrink: 0;
+
+        border-radius: 50%;
+
+        background: #2563eb;
+    }
+
+
+    /* =====================================================
+       CHAT CARD
+    ===================================================== */
+
+    .chat-card {
+        height: 500px;
+
+        min-width: 0;
+
+        background: #ffffff;
+
+        border: 1px solid #e2e8f0;
+
+        border-radius: 18px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 5px 15px
+            rgba(15, 23, 42, 0.06);
+
+        display: flex;
+
+        flex-direction: column;
+    }
+
+
+    /* =====================================================
+       CHAT HEADER
+    ===================================================== */
+
+    .chat-header {
+        height: 76px;
+
+        flex-shrink: 0;
+
+        padding: 0 20px;
+
+        background: #071a35;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+    }
+
+
+    .chat-customer-info {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+
+        min-width: 0;
+    }
+
+
+    .chat-avatar {
+        width: 45px;
+
+        height: 45px;
+
+        flex-shrink: 0;
+
+        border-radius: 50%;
+
+        background: #000000;
+
+        color: #ffffff;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 16px;
+
+        font-weight: 700;
+    }
+
+
+    .chat-customer-text {
+        min-width: 0;
+    }
+
+
+    .chat-customer-name {
+        color: #ffffff;
+
+        font-size: 17px;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+
+    .chat-customer-subtitle {
+        margin-top: 3px;
+
+        color: #cbd5e1;
+
+        font-size: 12px;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+
+    /* =====================================================
+       ORDER STATUS
+    ===================================================== */
+
+    .order-status {
+        flex-shrink: 0;
+
+        padding: 8px 15px;
+
+        border-radius: 999px;
+
+        background: #ecfdf5;
+
+        color: #047857;
+
+        font-size: 11px;
+
+        font-weight: 700;
+    }
+
+
+    .status-pending {
+        background: #fff7ed;
+
+        color: #c2410c;
+    }
+
+
+    .status-accepted {
+        background: #eff6ff;
+
+        color: #2563eb;
+    }
+
+
+    .status-production {
+        background: #eef2ff;
+
+        color: #4f46e5;
+    }
+
+
+    .status-ready {
+        background: #ecfdf5;
+
+        color: #047857;
+    }
+
+
+    .status-cancelled {
+        background: #fef2f2;
+
+        color: #dc2626;
+    }
+
+
+    /* =====================================================
+       MESSAGES
+    ===================================================== */
+
+    .messages-area {
+        flex: 1;
+
+        min-height: 0;
+
+        overflow-y: auto;
+
+        padding: 20px;
+
+        background: #f8fafc;
+    }
+
+
+    .messages-area::-webkit-scrollbar {
+        width: 4px;
+    }
+
+
+    .messages-area::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+
+        border-radius: 20px;
+    }
+
+
+    /* =====================================================
+       MESSAGE ROW
+    ===================================================== */
+
+    .message-row {
+        display: flex;
+
+        margin-bottom: 13px;
+    }
+
+
+    .message-row.customer {
+        justify-content: flex-start;
+    }
+
+
+    .message-row.tailor {
+        justify-content: flex-end;
+    }
+
+
+    .message-content {
+        max-width: 68%;
+    }
+
+
+    /* =====================================================
+       MESSAGE BUBBLE
+    ===================================================== */
+
+    .message-bubble {
+        padding: 10px 14px;
+
+        border-radius: 15px;
+
+        font-size: 14px;
+
+        line-height: 1.45;
+
+        word-break: break-word;
+    }
+
+
+    .message-bubble.customer {
+        background: #ffffff;
+
+        color: #334155;
+
+        border: 1px solid #dbe2e8;
+
+        border-top-left-radius: 5px;
+
+        box-shadow:
+            0 1px 2px
+            rgba(15, 23, 42, 0.03);
+    }
+
+
+    .message-bubble.tailor {
+        background: #071a35;
+
+        color: #ffffff;
+
+        border-top-right-radius: 5px;
+    }
+
+
+    .message-time {
+        margin-top: 4px;
+
+        font-size: 9px;
+
+        color: #94a3b8;
+    }
+
+
+    .message-time.right {
+        text-align: right;
+    }
+
+
+    .read-check {
+        color: #10b981;
+
+        margin-left: 3px;
+    }
+
+
+    /* =====================================================
+       MESSAGE FORM
+    ===================================================== */
+
+    .message-form {
+        flex-shrink: 0;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        padding: 11px;
+
+        background: #ffffff;
+
+        border-top: 1px solid #e2e8f0;
+    }
+
+
+    .message-input {
+        flex: 1;
+
+        min-width: 0;
+
+        height: 40px;
+
+        resize: none;
+
+        border: 1px solid #dbe2e8;
+
+        border-radius: 10px;
+
+        padding: 10px 13px;
+
+        background: #ffffff;
+
+        color: #334155;
+
+        font-size: 13px;
+
+        outline: none;
+
+        transition: 0.18s ease;
+    }
+
+
+    .message-input::placeholder {
+        color: #94a3b8;
+    }
+
+
+    .message-input:focus {
+        border-color: #94a3b8;
+
+        box-shadow:
+            0 0 0 3px
+            rgba(148, 163, 184, 0.10);
+    }
+
+
+    /* =====================================================
+       SEND
+    ===================================================== */
+
+    .send-button {
+        width: 40px;
+
+        height: 40px;
+
+        flex-shrink: 0;
+
+        border: none;
+
+        border-radius: 10px;
+
+        background: #071a35;
+
+        color: #ffffff;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        cursor: pointer;
+
+        transition: 0.18s ease;
+    }
+
+
+    .send-button:hover {
+        background: #102b4d;
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 5px 12px
+            rgba(7, 26, 53, 0.18);
+    }
+
+
+    /* =====================================================
+       EMPTY STATE
+    ===================================================== */
+
+    .empty-state {
+        height: 100%;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        text-align: center;
+
+        padding: 20px;
+    }
+
+
+    .empty-icon {
+        width: 58px;
+
+        height: 58px;
+
+        margin: 0 auto;
+
+        border-radius: 17px;
+
+        background: #f1f5f9;
+
+        color: #64748b;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+    }
+
+
+    .empty-title {
+        margin-top: 13px;
+
+        font-size: 16px;
+
+        font-weight: 700;
+
+        color: #334155;
+    }
+
+
+    .empty-description {
+        margin-top: 5px;
+
+        font-size: 12px;
+
+        line-height: 1.5;
+
+        color: #94a3b8;
+    }
+
+
+    /* =====================================================
+       NO SEARCH RESULTS
+    ===================================================== */
+
+    .no-results {
+        display: none;
+
+        padding: 35px 15px;
+
+        text-align: center;
+    }
+
+
+    .no-results-icon {
+        width: 45px;
+
+        height: 45px;
+
+        margin: 0 auto 10px;
+
+        border-radius: 13px;
+
+        background: #f1f5f9;
+
+        color: #64748b;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+    }
+
+
+    .no-results-title {
+        font-size: 13px;
+
+        font-weight: 700;
+
+        color: #334155;
+    }
+
+
+    .no-results-text {
+        margin-top: 4px;
+
+        font-size: 11px;
+
+        color: #94a3b8;
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 850px) {
+
+        .messages-page {
+            padding: 30px 16px;
+        }
+
+
+        .page-title {
+            font-size: 32px;
+        }
+
+
+        .messages-layout {
+            grid-template-columns: 1fr;
+
+            gap: 20px;
+        }
+
+
+        .customer-card {
+            height: 260px;
+        }
+
+
+        .chat-card {
+            height: 500px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<!-- =========================================================
+     PAGE
+========================================================= -->
+
+<div class="messages-page">
+
+
+    <!-- =====================================================
+         PAGE TITLE
+    ====================================================== -->
+
+    <h1 class="page-title">
+        Messages
+    </h1>
+
+
+    <p class="page-subtitle">
+        Conversations with your customers.
+    </p>
+
+
+
+    <!-- =====================================================
+         TWO SEPARATE CARDS
+    ====================================================== -->
+
+    <div class="messages-layout">
+
+
+        <!-- =================================================
+             CUSTOMER LIST
+        ================================================== -->
+
+        <div class="customer-card">
+
+
+            <!-- SEARCH -->
+
+            <div class="customer-search">
+
+                <div class="search-box">
+
+                    <div class="search-icon">
+
+                        <svg
+                            width="17"
+                            height="17"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"
+                            />
+
+                            <path
+                                d="m20 20-4-4"
+                            />
+
+                        </svg>
+
+                    </div>
+
+
+                    <input
+                        type="text"
+                        id="customerSearch"
+                        class="customer-search-input"
+                        placeholder="Search customers..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CUSTOMER LIST -->
+
+            <div
+                class="customer-list"
+                id="customerList"
+            >
+
+                {% for conversation in conversations %}
+
+                    <a
+                        href="{% url 'tailors:chat' %}?user={{ conversation.user.id }}"
+                        class="customer-item
+                        {% if active_customer and active_customer.id == conversation.user.id %}
+                            active
+                        {% endif %}"
+                        data-customer-name="
+                        {% if conversation.user.get_full_name %}
+                            {{ conversation.user.get_full_name|lower }}
+                        {% else %}
+                            {{ conversation.user.username|lower }}
+                        {% endif %}
+                        "
+                    >
+
+                        <!-- AVATAR -->
+
+                        <div class="customer-avatar">
+                            {{ conversation.user.username|first|upper }}
+                        </div>
+
+
+                        <!-- INFORMATION -->
+
+                        <div class="customer-information">
+
+                            <div class="customer-name">
+
+                                {% if conversation.user.get_full_name %}
+                                    {{ conversation.user.get_full_name }}
+                                {% else %}
+                                    {{ conversation.user.username }}
+                                {% endif %}
+
+                            </div>
+
+
+                            {% if conversation.last_message %}
+
+                                <div class="customer-preview">
+
+                                    {% if conversation.last_message.sender_id == request.user.id %}
+                                        You:
+                                    {% endif %}
+
+                                    {{ conversation.last_message.message }}
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="customer-preview">
+                                    No messages yet
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- UNREAD -->
+
+                        {% if conversation.last_message %}
+
+                            {% if conversation.last_message.receiver_id == request.user.id and not conversation.last_message.is_read %}
+
+                                <span class="unread-dot"></span>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </a>
+
+                {% empty %}
+
+                    <!-- NO CONVERSATIONS -->
+
+                    <div class="empty-state">
+
+                        <div>
+
+                            <div class="empty-icon">
+
+                                <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.7"
+                                >
+
+                                    <path
+                                        d="M21 11.5a8.4 8.4 0 0 1-9 8.3 9.2 9.2 0 0 1-4-.9L3 20l1.2-4.3A8 8 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3.2a8.4 8.4 0 0 1 9 8.3Z"
+                                    />
+
+                                </svg>
+
+                            </div>
+
+
+                            <div class="empty-title">
+                                No conversations
+                            </div>
+
+
+                            <div class="empty-description">
+                                Customer conversations will appear here.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- NO SEARCH RESULTS -->
+
+                <div
+                    id="noSearchResults"
+                    class="no-results"
+                >
+
+                    <div class="no-results-icon">
+
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"
+                            />
+
+                            <path
+                                d="m20 20-4-4"
+                            />
+
+                        </svg>
+
+                    </div>
+
+
+                    <div class="no-results-title">
+                        No customer found
+                    </div>
+
+
+                    <div class="no-results-text">
+                        Try another name.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             CHAT CARD
+        ================================================== -->
+
+        <div class="chat-card">
+
+            {% if active_customer %}
+
+
+                <!-- =================================================
+                     CHAT HEADER
+                ================================================== -->
+
+                <div class="chat-header">
+
+                    <div class="chat-customer-info">
+
+                        <div class="chat-avatar">
+                            {{ active_customer.username|first|upper }}
+                        </div>
+
+
+                        <div class="chat-customer-text">
+
+                            <div class="chat-customer-name">
+
+                                {% if active_customer.get_full_name %}
+                                    {{ active_customer.get_full_name }}
+                                {% else %}
+                                    {{ active_customer.username }}
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="chat-customer-subtitle">
+
+                                {% if active_order %}
+
+                                    Order #{{ active_order.order_id }}
+
+                                    <span style="margin: 0 5px;">
+                                        •
+                                    </span>
+
+                                    {{ active_order.product_name }}
+
+                                {% else %}
+
+                                    Customer
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         ORDER STATUS
+                    ================================================== -->
+
+                    {% if active_order %}
+
+                        {% if active_order.status == "Pending" %}
+
+                            <div class="order-status status-pending">
+                                Pending
+                            </div>
+
+
+                        {% elif active_order.status == "Accepted" %}
+
+                            <div class="order-status status-accepted">
+                                Accepted
+                            </div>
+
+
+                        {% elif active_order.status == "Cutting" or active_order.status == "Stitching" or active_order.status == "Finishing" %}
+
+                            <div class="order-status status-production">
+                                {{ active_order.status }}
+                            </div>
+
+
+                        {% elif active_order.status == "Ready" %}
+
+                            <div class="order-status status-ready">
+                                Ready
+                            </div>
+
+
+                        {% elif active_order.status == "Delivered" %}
+
+                            <div class="order-status status-ready">
+                                Delivered
+                            </div>
+
+
+                        {% elif active_order.status == "Cancelled" %}
+
+                            <div class="order-status status-cancelled">
+                                Cancelled
+                            </div>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- =================================================
+                     MESSAGES
+                ================================================== -->
+
+                <div
+                    id="messageContainer"
+                    class="messages-area"
+                >
+
+                    {% if messages %}
+
+                        {% for message in messages %}
+
+
+                            <!-- CUSTOMER MESSAGE -->
+
+                            {% if message.sender_id == active_customer.id %}
+
+                                <div class="message-row customer">
+
+                                    <div class="message-content">
+
+                                        <div class="message-bubble customer">
+                                            {{ message.message }}
+                                        </div>
+
+
+                                        <div class="message-time">
+                                            {{ message.created_at|date:"h:i A" }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                            <!-- TAILOR MESSAGE -->
+
+                            {% else %}
+
+                                <div class="message-row tailor">
+
+                                    <div class="message-content">
+
+                                        <div class="message-bubble tailor">
+                                            {{ message.message }}
+                                        </div>
+
+
+                                        <div class="message-time right">
+
+                                            {{ message.created_at|date:"h:i A" }}
+
+                                            {% if message.is_read %}
+
+                                                <span class="read-check">
+                                                    ✓✓
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+
+                    {% else %}
+
+                        <!-- NO MESSAGES -->
+
+                        <div class="empty-state">
+
+                            <div>
+
+                                <div class="empty-icon">
+
+                                    <svg
+                                        width="25"
+                                        height="25"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"
+                                    >
+
+                                        <path
+                                            d="M21 11.5a8.4 8.4 0 0 1-9 8.3 9.2 9.2 0 0 1-4-.9L3 20l1.2-4.3A8 8 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3.2a8.4 8.4 0 0 1 9 8.3Z"
+                                        />
+
+                                    </svg>
+
+                                </div>
+
+
+                                <div class="empty-title">
+                                    Start a conversation
+                                </div>
+
+
+                                <div class="empty-description">
+                                    Send a message to
+                                    {{ active_customer.username }}.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- =================================================
+                     MESSAGE FORM
+                ================================================== -->
+
+                <form
+                    method="POST"
+                    class="message-form"
+                >
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="receiver_id"
+                        value="{{ active_customer.id }}"
+                    >
+
+
+                    <textarea
+                        id="messageInput"
+                        name="message"
+                        class="message-input"
+                        placeholder="Type a message..."
+                        rows="1"
+                        required
+                    ></textarea>
+
+
+                    <button
+                        type="submit"
+                        class="send-button"
+                        title="Send message"
+                    >
+
+                        <svg
+                            width="17"
+                            height="17"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+
+                            <path
+                                d="m22 2-7 20-4-9-9-4Z"
+                            />
+
+                            <path
+                                d="M22 2 11 13"
+                            />
+
+                        </svg>
+
+                    </button>
+
+                </form>
+
+
+            {% else %}
+
+
+                <!-- =================================================
+                     NO CUSTOMER SELECTED
+                ================================================== -->
+
+                <div class="empty-state">
+
+                    <div>
+
+                        <div class="empty-icon">
+
+                            <svg
+                                width="28"
+                                height="28"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
+
+                                <path
+                                    d="M21 11.5a8.4 8.4 0 0 1-9 8.3 9.2 9.2 0 0 1-4-.9L3 20l1.2-4.3A8 8 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3.2a8.4 8.4 0 0 1 9 8.3Z"
+                                />
+
+                            </svg>
+
+                        </div>
+
+
+                        <div class="empty-title">
+                            Select a conversation
+                        </div>
+
+
+                        <div class="empty-description">
+                            Choose a customer from the list
+                            to start chatting.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+    /* =========================================================
+       CUSTOMER SEARCH
+    ========================================================= */
+
+    const customerSearch =
+        document.getElementById("customerSearch");
+
+
+    const customerItems =
+        document.querySelectorAll(".customer-item");
+
+
+    const noSearchResults =
+        document.getElementById("noSearchResults");
+
+
+    if (customerSearch) {
+
+        customerSearch.addEventListener(
+            "input",
+            function () {
+
+                const searchText =
+                    this.value
+                        .toLowerCase()
+                        .trim();
+
+
+                let visibleCount = 0;
+
+
+                customerItems.forEach(
+                    function(item) {
+
+                        const customerName =
+                            item.dataset.customerName
+                                .trim();
+
+
+                        if (
+                            customerName.includes(
+                                searchText
+                            )
+                        ) {
+
+                            item.style.display =
+                                "flex";
+
+                            visibleCount++;
+
+                        } else {
+
+                            item.style.display =
+                                "none";
+
+                        }
+
+                    }
+                );
+
+
+                if (
+                    noSearchResults &&
+                    searchText !== "" &&
+                    visibleCount === 0
+                ) {
+
+                    noSearchResults.style.display =
+                        "block";
+
+                } else {
+
+                    noSearchResults.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =========================================================
+       AUTO SCROLL
+    ========================================================= */
+
+    const messageContainer =
+        document.getElementById(
+            "messageContainer"
+        );
+
+
+    if (messageContainer) {
+
+        messageContainer.scrollTop =
+            messageContainer.scrollHeight;
+
+    }
+
+
+
+    /* =========================================================
+       ENTER TO SEND
+       SHIFT + ENTER = NEW LINE
+    ========================================================= */
+
+    const messageInput =
+        document.getElementById(
+            "messageInput"
+        );
+
+
+    if (messageInput) {
+
+        messageInput.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    this.form.submit();
+
+                }
+
+            }
+        );
+
+    }
+
+</script>
+
+{% endblock %}

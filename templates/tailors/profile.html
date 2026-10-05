@@ -1,0 +1,1361 @@
+{% extends "tailors/base.html" %}
+{% block title %}
+Profile | {{ shop_name }} 
+{%endblock %}
+{% block extra_css %}
+
+<style>
+  /* =========================================================
+       PROFILE PAGE
+    ========================================================= */
+
+  .profile-page {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 24px 45px;
+  }
+
+  /* =========================================================
+       PROFILE CARD
+    ========================================================= */
+
+  .profile-card {
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+  }
+
+  /* =========================================================
+       COVER
+    ========================================================= */
+
+  .profile-cover {
+    height: 135px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: linear-gradient(135deg, #071a35 0%, #0a192f 55%, #132b4a 100%);
+  }
+
+  .profile-cover::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background-image: radial-gradient(
+      circle at 15% 25%,
+      rgba(255, 255, 255, 0.12) 1px,
+      transparent 1px
+    );
+
+    background-size: 24px 24px;
+
+    opacity: 0.55;
+  }
+
+  .profile-cover::after {
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    right: -70px;
+    top: -130px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(212, 175, 55, 0.18);
+
+    box-shadow:
+      0 0 0 35px rgba(212, 175, 55, 0.04),
+      0 0 0 70px rgba(212, 175, 55, 0.025);
+  }
+
+  /* GOLD LINE */
+
+  .profile-gold-line {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 4px;
+
+    background: linear-gradient(90deg, #d4af37, #f1d77a, #d4af37);
+  }
+
+  /* =========================================================
+       PROFILE INTRO
+    ========================================================= */
+
+  .profile-intro {
+    position: relative;
+
+    padding: 0 30px 22px;
+  }
+
+  /* =========================================================
+       AVATAR
+    ========================================================= */
+
+  .profile-avatar {
+    position: absolute;
+
+    left: 30px;
+    top: -48px;
+
+    width: 96px;
+    height: 96px;
+
+    border-radius: 28px;
+
+    background: linear-gradient(145deg, #0a192f, #142b49);
+
+    border: 6px solid #ffffff;
+
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #ffffff;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+  }
+
+  .profile-avatar::after {
+    content: "";
+
+    position: absolute;
+
+    right: -5px;
+    bottom: -5px;
+
+    width: 27px;
+    height: 27px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    border: 4px solid #ffffff;
+  }
+
+  /* =========================================================
+       SHOP HEADER
+    ========================================================= */
+
+  .profile-shop-header {
+    padding-top: 62px;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 25px;
+  }
+
+  .profile-shop-info {
+    min-width: 0;
+  }
+
+  .profile-shop-name-row {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+  }
+
+  .profile-shop-name {
+    margin: 0;
+
+    color: #071a35;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 27px;
+
+    line-height: 1.15;
+
+    font-weight: 700;
+  }
+
+  .verified-badge {
+    width: 25px;
+    height: 25px;
+
+    border-radius: 50%;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #dcfce7;
+
+    color: #16a34a;
+
+    font-size: 14px;
+
+    font-weight: 800;
+  }
+
+  .profile-shop-type {
+    margin: 8px 0 0;
+
+    color: #64748b;
+
+    font-size: 15px;
+  }
+
+  .profile-meta-row {
+    margin-top: 13px;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+  }
+
+  .profile-meta {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border-radius: 9px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    color: #64748b;
+
+    font-size: 12px;
+  }
+
+  .profile-meta svg {
+    width: 15px;
+    height: 15px;
+
+    color: #d4af37;
+  }
+
+  /* =========================================================
+       EDIT BUTTON
+    ========================================================= */
+
+  .edit-profile-button {
+    flex-shrink: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 11px 17px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background: #0a192f;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: 0 6px 15px rgba(10, 25, 47, 0.16);
+
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .edit-profile-button:hover {
+    background: #142b49;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 9px 20px rgba(10, 25, 47, 0.2);
+  }
+
+  .edit-profile-button svg {
+    width: 16px;
+    height: 16px;
+
+    color: #d4af37;
+  }
+
+  /* =========================================================
+       DIVIDER
+    ========================================================= */
+
+  .profile-divider {
+    height: 1px;
+
+    background: #e2e8f0;
+
+    margin-top: 18px;
+  }
+
+  /* =========================================================
+       INFORMATION SECTION
+    ========================================================= */
+
+  .profile-information {
+    padding: 20px 30px 26px;
+  }
+
+  .section-heading-row {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+  }
+
+  .section-heading {
+    margin: 0;
+
+    color: #071a35;
+
+    font-size: 18px;
+
+    font-weight: 700;
+  }
+
+  .section-description {
+    margin: 4px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+  }
+
+  .section-accent {
+    width: 38px;
+    height: 4px;
+
+    border-radius: 99px;
+
+    background: #d4af37;
+  }
+
+  /* =========================================================
+       INFORMATION GRID
+    ========================================================= */
+
+  .profile-info-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+
+  .info-card {
+    position: relative;
+
+    min-width: 0;
+
+    padding: 13px 15px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 13px;
+
+    background: #ffffff;
+
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .info-card:hover {
+    border-color: #d4af37;
+
+    box-shadow: 0 7px 20px rgba(15, 23, 42, 0.06);
+
+    transform: translateY(-1px);
+  }
+
+  .info-card-top {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+  }
+
+  .info-icon {
+    width: 32px;
+    height: 32px;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #f8f4e5;
+
+    color: #a68112;
+  }
+
+  .info-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .info-label {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+  }
+
+  .info-value {
+    margin: 7px 0 0;
+
+    color: #071a35;
+
+    font-size: 15px;
+
+    font-weight: 650;
+
+    overflow-wrap: anywhere;
+  }
+
+  .info-value.empty {
+    color: #94a3b8;
+
+    font-weight: 500;
+
+    font-style: italic;
+  }
+
+  /* =========================================================
+       ABOUT SHOP
+    ========================================================= */
+
+  .about-shop {
+    margin-top: 10px;
+
+    padding: 16px 18px;
+
+    border-radius: 16px;
+
+    border: 1px solid #e2e8f0;
+
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .about-shop-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+  }
+
+  .about-icon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: #0a192f;
+
+    color: #d4af37;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+  }
+
+  .about-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .about-shop-title {
+    margin: 0;
+
+    color: #071a35;
+
+    font-size: 15px;
+
+    font-weight: 700;
+  }
+
+  .about-shop-text {
+    margin: 14px 0 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.75;
+  }
+
+  /* =========================================================
+       MODAL
+    ========================================================= */
+
+  .profile-modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    background: rgba(7, 26, 53, 0.62);
+
+    backdrop-filter: blur(5px);
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 15px;
+
+    overflow: hidden;
+  }
+
+  .profile-modal.show {
+    display: flex;
+  }
+
+  .profile-modal-card {
+    width: 100%;
+
+    max-width: 510px;
+
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+
+    border: 1px solid #e2e8f0;
+
+    overflow: hidden;
+  }
+
+  .modal-header {
+    padding: 22px 24px;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+  }
+
+  .modal-title {
+    margin: 0;
+
+    color: #071a35;
+
+    font-size: 19px;
+
+    font-weight: 700;
+  }
+
+  .modal-subtitle {
+    margin: 4px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+  }
+
+  .modal-close {
+    width: 34px;
+    height: 34px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+  }
+
+  .modal-close:hover {
+    background: #e2e8f0;
+
+    color: #071a35;
+  }
+
+  .profile-form {
+    padding: 18px 24px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .form-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 12px;
+
+    font-weight: 600;
+  }
+
+  .form-input,
+  .form-textarea {
+    width: 100%;
+
+    border: 1px solid #dbe2e8;
+
+    border-radius: 11px;
+
+    padding: 11px 13px;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .form-input {
+    height: 40px;
+  }
+
+  .form-textarea {
+    min-height: 75px;
+
+    resize: vertical;
+
+    line-height: 1.5;
+  }
+
+  .form-input:focus,
+  .form-textarea:focus {
+    border-color: #d4af37;
+
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.13);
+  }
+
+  .modal-buttons {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 16px;
+  }
+
+  .modal-button {
+    flex: 1;
+
+    height: 43px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+  }
+
+  .modal-cancel {
+    border: 1px solid #dbe2e8;
+
+    background: #ffffff;
+
+    color: #475569;
+  }
+
+  .modal-cancel:hover {
+    background: #f8fafc;
+  }
+
+  .modal-save {
+    border: none;
+
+    background: #0a192f;
+
+    color: #ffffff;
+  }
+
+  .modal-save:hover {
+    background: #142b49;
+  }
+
+  /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+  @media (max-width: 800px) {
+    .profile-page {
+      padding: 25px 16px 45px;
+    }
+
+    .profile-cover {
+      height: 145px;
+    }
+
+    .profile-intro {
+      padding: 0 22px 25px;
+    }
+
+    .profile-avatar {
+      left: 22px;
+
+      width: 100px;
+      height: 100px;
+
+      top: -50px;
+    }
+
+    .profile-shop-header {
+      padding-top: 68px;
+
+      flex-direction: column;
+    }
+
+    .profile-shop-name {
+      font-size: 27px;
+    }
+
+    .edit-profile-button {
+      width: 100%;
+
+      justify-content: center;
+    }
+
+    .profile-information {
+      padding: 25px 22px 30px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .profile-info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .profile-shop-name {
+      font-size: 24px;
+    }
+
+    .profile-meta-row {
+      flex-direction: column;
+
+      align-items: flex-start;
+    }
+  }
+</style>
+
+{% endblock %} {% block content %}
+
+<div class="profile-page">
+  <div class="profile-card">
+    <!-- =====================================================
+             COVER
+        ====================================================== -->
+
+    <div class="profile-cover">
+      <div class="profile-gold-line"></div>
+    </div>
+
+    <!-- =====================================================
+             SHOP INTRO
+        ====================================================== -->
+
+    <div class="profile-intro">
+      <!-- AVATAR -->
+
+      <div class="profile-avatar">{{ shop.name|first|upper }}</div>
+
+      <div class="profile-shop-header">
+        <!-- SHOP INFORMATION -->
+
+        <div class="profile-shop-info">
+          <div class="profile-shop-name-row">
+            <h1 class="profile-shop-name">{{ shop.name }}</h1>
+
+            <span class="verified-badge"> ✓ </span>
+          </div>
+
+          <p class="profile-shop-type">Professional Tailoring Shop</p>
+
+          <div class="profile-meta-row">
+            {% if profile.location %}
+
+            <span class="profile-meta">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+
+                <circle cx="12" cy="10" r="2.5" />
+              </svg>
+
+              {{ profile.location }}
+            </span>
+
+            {% endif %} {% if user_profile.phone %}
+
+            <span class="profile-meta">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2
+                                           19.8 19.8 0 0 1-8.63-3.07
+                                           19.5 19.5 0 0 1-6-6
+                                           A19.8 19.8 0 0 1 2.12 4.18
+                                           2 2 0 0 1 4.11 2h3
+                                           a2 2 0 0 1 2 1.72
+                                           12.8 12.8 0 0 0 .7 2.81
+                                           2 2 0 0 1-.45 2.11L8.09 9.91
+                                           a16 16 0 0 0 6 6l1.27-1.27
+                                           a2 2 0 0 1 2.11-.45
+                                           12.8 12.8 0 0 0 2.81.7
+                                           A2 2 0 0 1 22 16.92Z"
+                />
+              </svg>
+
+              {{ user_profile.phone }}
+            </span>
+
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- EDIT BUTTON -->
+
+        <button
+          type="button"
+          onclick="openEditProfile()"
+          class="edit-profile-button"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 20h9" />
+
+            <path
+              d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1
+                               1-4Z"
+            />
+          </svg>
+
+          Edit Profile
+        </button>
+      </div>
+
+      <div class="profile-divider"></div>
+    </div>
+
+    <!-- =====================================================
+             PROFILE INFORMATION
+        ====================================================== -->
+
+    <div class="profile-information">
+      <div class="section-heading-row">
+        <div>
+          <h2 class="section-heading">Profile Information</h2>
+
+          <p class="section-description">Your account and shop details</p>
+        </div>
+
+        <div class="section-accent"></div>
+      </div>
+
+      <div class="profile-info-grid">
+        <!-- OWNER -->
+
+        <div class="info-card">
+          <div class="info-card-top">
+            <div class="info-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21a8 8 0 0 0-16 0" />
+
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+
+            <p class="info-label">Owner Name</p>
+          </div>
+
+          <p class="info-value">
+            {% if user.get_full_name %} {{ user.get_full_name }} {% else %} {{
+            user.username }} {% endif %}
+          </p>
+        </div>
+
+        <!-- USERNAME -->
+
+        <div class="info-card">
+          <div class="info-card-top">
+            <div class="info-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21a8 8 0 0 0-16 0" />
+
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+
+            <p class="info-label">Username</p>
+          </div>
+
+          <p class="info-value">{{ user.username }}</p>
+        </div>
+
+        <!-- EMAIL -->
+
+        <div class="info-card">
+          <div class="info-card-top">
+            <div class="info-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+
+                <path d="m3 7 9 6 9-6" />
+              </svg>
+            </div>
+
+            <p class="info-label">Email</p>
+          </div>
+
+          {% if user.email %}
+
+          <p class="info-value">{{ user.email }}</p>
+
+          {% else %}
+
+          <p class="info-value empty">Not provided</p>
+
+          {% endif %}
+        </div>
+
+        <!-- PHONE -->
+
+        <div class="info-card">
+          <div class="info-card-top">
+            <div class="info-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2
+                                       19.8 19.8 0 0 1-8.63-3.07
+                                       19.5 19.5 0 0 1-6-6
+                                       A19.8 19.8 0 0 1 2.12 4.18
+                                       2 2 0 0 1 4.11 2h3
+                                       a2 2 0 0 1 2 1.72
+                                       12.8 12.8 0 0 0 .7 2.81
+                                       2 2 0 0 1-.45 2.11L8.09 9.91
+                                       a16 16 0 0 0 6 6l1.27-1.27
+                                       a2 2 0 0 1 2.11-.45
+                                       12.8 12.8 0 0 0 2.81.7
+                                       A2 2 0 0 1 22 16.92Z"
+                />
+              </svg>
+            </div>
+
+            <p class="info-label">Phone</p>
+          </div>
+
+          {% if user_profile.phone %}
+
+          <p class="info-value">{{ user_profile.phone }}</p>
+
+          {% else %}
+
+          <p class="info-value empty">Not provided</p>
+
+          {% endif %}
+        </div>
+
+        <!-- SHOP NAME -->
+
+        <div class="info-card">
+          <div class="info-card-top">
+            <div class="info-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M3 21h18" />
+
+                <path d="M5 21V7l7-4 7 4v14" />
+
+                <path d="M9 21v-6h6v6" />
+              </svg>
+            </div>
+
+            <p class="info-label">Shop Name</p>
+          </div>
+
+          <p class="info-value">{{ shop.name }}</p>
+        </div>
+
+        <!-- LOCATION -->
+
+        <div class="info-card">
+          <div class="info-card-top">
+            <div class="info-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M20 10c0 5-8 11-8 11S4 15 4 10
+                                       a8 8 0 1 1 16 0Z"
+                />
+
+                <circle cx="12" cy="10" r="2.5" />
+              </svg>
+            </div>
+
+            <p class="info-label">Location</p>
+          </div>
+
+          {% if profile.location %}
+
+          <p class="info-value">{{ profile.location }}</p>
+
+          {% else %}
+
+          <p class="info-value empty">Not provided</p>
+
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- =================================================
+                 ABOUT SHOP
+            ================================================== -->
+
+      <div class="about-shop">
+        <div class="about-shop-header">
+          <div class="about-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M21 11.5a8.4 8.4 0 0 1-9
+                                   8.3 9.2 9.2 0 0 1-4-.9
+                                   L3 20l1.2-4.3A8 8 0 0 1
+                                   3 11.5a8.4 8.4 0 0 1 9-8.3
+                                   8.4 8.4 0 0 1 9 8.3Z"
+              />
+            </svg>
+          </div>
+
+          <h3 class="about-shop-title">About Shop</h3>
+        </div>
+
+        <p class="about-shop-text">
+          {% if shop.bio %} {{ shop.bio }} {% else %} No shop description added
+          yet. {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     EDIT PROFILE MODAL
+========================================================= -->
+
+<div id="editProfileModal" class="profile-modal">
+  <div class="profile-modal-card">
+    <!-- MODAL HEADER -->
+
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title">Edit Profile</h2>
+
+        <p class="modal-subtitle">Update your shop information.</p>
+      </div>
+
+      <button type="button" onclick="closeEditProfile()" class="modal-close">
+        ×
+      </button>
+    </div>
+
+    <!-- FORM -->
+
+    <form method="POST" class="profile-form">
+      {% csrf_token %}
+
+      <!-- OWNER NAME -->
+
+      <div class="form-group">
+        <label class="form-label"> Owner Name </label>
+
+        <input
+          type="text"
+          name="first_name"
+          value="{{ user.first_name }}"
+          placeholder="Enter owner name"
+          class="form-input"
+        />
+      </div>
+
+      <!-- EMAIL -->
+
+      <div class="form-group">
+        <label class="form-label"> Email </label>
+
+        <input
+          type="email"
+          name="email"
+          value="{{ user.email }}"
+          placeholder="Enter email"
+          class="form-input"
+        />
+      </div>
+
+      <!-- PHONE -->
+
+      <div class="form-group">
+        <label class="form-label"> Phone </label>
+
+        <input
+          type="text"
+          name="phone"
+          value="{{ user_profile.phone }}"
+          placeholder="01XXXXXXXXX"
+          class="form-input"
+        />
+      </div>
+
+      <!-- SHOP NAME -->
+
+      <div class="form-group">
+        <label class="form-label"> Shop Name </label>
+
+        <input
+          type="text"
+          name="shop_name"
+          value="{{ shop.name }}"
+          required
+          class="form-input"
+        />
+      </div>
+
+      <!-- LOCATION -->
+
+      <div class="form-group">
+        <label class="form-label"> Location </label>
+
+        <input
+          type="text"
+          name="location"
+          value="{{ profile.location }}"
+          placeholder="e.g. Dhanmondi, Dhaka"
+          class="form-input"
+        />
+      </div>
+
+      <!-- ABOUT SHOP -->
+
+      <div class="form-group">
+        <label class="form-label"> About Shop </label>
+
+        <textarea
+          name="bio"
+          rows="4"
+          placeholder="Tell customers about your shop..."
+          class="form-textarea"
+        >
+{{ shop.bio }}</textarea
+        >
+      </div>
+
+      <!-- BUTTONS -->
+
+      <div class="modal-buttons">
+        <button
+          type="button"
+          onclick="closeEditProfile()"
+          class="modal-button modal-cancel"
+        >
+          Cancel
+        </button>
+
+        <button type="submit" class="modal-button modal-save">
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %} {% block extra_js %}
+
+<script>
+  /* =========================================================
+       OPEN PROFILE MODAL
+    ========================================================= */
+
+  function openEditProfile() {
+    const modal = document.getElementById("editProfileModal");
+
+    modal.classList.add("show");
+
+    document.body.style.overflow = "hidden";
+  }
+
+  /* =========================================================
+       CLOSE PROFILE MODAL
+    ========================================================= */
+
+  function closeEditProfile() {
+    const modal = document.getElementById("editProfileModal");
+
+    modal.classList.remove("show");
+
+    document.body.style.overflow = "";
+  }
+
+  /* =========================================================
+       CLOSE WHEN CLICKING OUTSIDE
+    ========================================================= */
+
+  document
+    .getElementById("editProfileModal")
+    .addEventListener("click", function (event) {
+      if (event.target === this) {
+        closeEditProfile();
+      }
+    });
+
+  /* =========================================================
+       ESC KEY
+    ========================================================= */
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      closeEditProfile();
+    }
+  });
+</script>
+
+{% endblock %}

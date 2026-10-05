@@ -6,276 +6,345 @@
 {% block content %}
 <div class="mx-auto max-w-[1200px] space-y-6 bg-slate-50/70 px-4 py-6 sm:px-6 sm:py-8">
 
-  <!-- ============================================================
-       HERO / WELCOME — styled to match the TSX customer dashboard
-       ============================================================ -->
-  <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-navy via-navy to-slate-900 px-6 py-7 shadow-sm sm:px-8 sm:py-8">
-    <div class="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-white/5"></div>
-    <div class="pointer-events-none absolute -bottom-20 right-20 h-44 w-44 rounded-full bg-amber-400/10"></div>
+    <!-- ============================================================
+         HERO / WELCOME — styled to match the TSX customer dashboard
+         ============================================================ -->
+    <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-navy via-navy to-slate-900 px-6 py-7 shadow-sm sm:px-8 sm:py-8">
+        <div class="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-white/5"></div>
+        <div class="pointer-events-none absolute -bottom-20 right-20 h-44 w-44 rounded-full bg-amber-400/10"></div>
 
-    <div class="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <div class="mb-2 inline-flex items-center rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/80">
-          Customer Dashboard
-        </div>
+        <div class="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <div class="mb-2 inline-flex items-center rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/80">
+                    Customer Dashboard
+                </div>
 
-        <h1 class="font-serif text-2xl font-bold text-white sm:text-3xl">
-          Welcome back, {{ request.user.first_name|default:request.user.username }}
-        </h1>
+                <h1 class="font-serif text-2xl font-bold text-white sm:text-3xl">
+                    Welcome back, {{ request.user.first_name|default:request.user.username }}
+                </h1>
 
-        <p class="mt-2 max-w-xl text-[14px] leading-6 text-white/70">
-          Keep track of your custom orders, production progress, and receipts from one place.
-        </p>
-      </div>
-
-      <a href="{% url 'core:marketplace' %}"
-         class="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-lg bg-white px-4 py-2.5 text-[13px] font-semibold text-navy shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 sm:self-auto">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M5 12h14"></path><path d="M12 5v14"></path>
-        </svg>
-        New Order
-      </a>
-    </div>
-  </section>
-
-  <!-- ===================== KPI CARDS ===================== -->
-  <section class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-
-    <!-- Active Orders -->
-    <div class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Active Orders</div>
-          <div class="mt-2 font-serif text-3xl font-bold text-navy">{{ active_count|default:0 }}</div>
-          <div class="mt-1 text-[12px] text-gray-400">Currently in progress</div>
-        </div>
-        <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="m9 11 3 3L22 4"></path>
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Saved Profiles -->
-    <div class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Saved Profiles</div>
-          <div class="mt-2 font-serif text-3xl font-bold text-navy">3</div>
-          <div class="mt-1 text-[12px] text-gray-400">Ready for ordering</div>
-        </div>
-        <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-500">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Completed -->
-    <div class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Completed</div>
-          <div class="mt-2 font-serif text-3xl font-bold text-navy">{{ completed_count|default:0 }}</div>
-          <div class="mt-1 text-[12px] text-gray-400">Delivered orders</div>
-        </div>
-        <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-600">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line>
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Total Spent -->
-    <div class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Total Spent</div>
-          <div class="mt-2 font-serif text-3xl font-bold text-navy">${{ total_spent|default:0 }}</div>
-          <div class="mt-1 text-[12px] text-gray-400">Across all orders</div>
-        </div>
-        <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-slate-100 text-navy">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M20 7V5a2 2 0 0 0-2-2H5a3 3 0 0 0 0 6h15v10a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V6"></path><path d="M16 13h4"></path>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== FEATURED ACTIVE ORDER ===================== -->
-  {% if active_orders %}
-  {% with active=active_orders.0 %}
-  <section class="overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-indigo-50 shadow-sm">
-
-    <!-- Order header -->
-    <div class="border-b border-blue-100 bg-blue-50/70 px-5 py-4 sm:px-6">
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="min-w-0">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Active Order</span>
-            <span class="text-gray-300">•</span>
-            <span class="text-[12px] font-semibold text-navy">{{ active.order_id }}</span>
-          </div>
-
-          <h3 class="mt-1 truncate font-serif text-lg font-bold text-navy sm:text-xl">
-            {{ active.product_name }}
-          </h3>
-          <p class="mt-1 text-[13px] text-gray-500">Tailored by {{ active.shop_name }}</p>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-amber-800">
-            Pending
-          </span>
-          <a href="{% url 'customers:order_tracking' active.order_id %}"
-   class="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-[12px] font-semibold text-navy shadow-sm transition hover:bg-gray-50">
-  Track Order
-</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Progress -->
-    <div class="px-5 py-6 sm:px-6">
-      <div class="mb-4">
-        <div class="text-[13px] font-semibold text-navy">Production Progress</div>
-        <div class="mt-0.5 text-[12px] text-gray-500">Follow each tailoring stage as your order moves forward.</div>
-      </div>
-
-      <div class="rounded-xl border border-blue-100 bg-white/90 p-4 shadow-inner sm:p-5">
-        <div class="overflow-x-auto pb-1">
-          <div class="min-w-[680px]">
-            <div class="relative grid grid-cols-6 gap-2">
-              <!-- connector line -->
-              <div class="absolute left-[8.3%] right-[8.3%] top-4 h-[2px] bg-gray-200"></div>
-
-              <!-- Step 1 -->
-              <div class="relative z-10 text-center">
-                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full bg-navy text-[12px] font-bold text-white ring-4 ring-gray-50">1</div>
-                <div class="mt-2 text-[11px] font-semibold text-navy">Accepted</div>
-              </div>
-
-              <!-- Step 2 -->
-              <div class="relative z-10 text-center">
-                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-[12px] font-bold text-gray-500 ring-4 ring-gray-50">2</div>
-                <div class="mt-2 text-[11px] text-gray-400">Cutting</div>
-              </div>
-
-              <!-- Step 3 -->
-              <div class="relative z-10 text-center">
-                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-[12px] font-bold text-gray-500 ring-4 ring-gray-50">3</div>
-                <div class="mt-2 text-[11px] text-gray-400">Stitching</div>
-              </div>
-
-              <!-- Step 4 -->
-              <div class="relative z-10 text-center">
-                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-[12px] font-bold text-gray-500 ring-4 ring-gray-50">4</div>
-                <div class="mt-2 text-[11px] text-gray-400">Trial</div>
-              </div>
-
-              <!-- Step 5 -->
-              <div class="relative z-10 text-center">
-                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-[12px] font-bold text-gray-500 ring-4 ring-gray-50">5</div>
-                <div class="mt-2 text-[11px] text-gray-400">Ready</div>
-              </div>
-
-              <!-- Step 6 -->
-              <div class="relative z-10 text-center">
-                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-[12px] font-bold text-gray-500 ring-4 ring-gray-50">6</div>
-                <div class="mt-2 text-[11px] text-gray-400">Delivered</div>
-              </div>
+                <p class="mt-2 max-w-xl text-[14px] leading-6 text-white/70">
+                    Keep track of your custom orders, production progress, and receipts from one place.
+                </p>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  {% endwith %}
-  {% endif %}
 
-  <!-- ===================== RECENT ORDERS ===================== -->
-  <section class="overflow-hidden rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 via-white to-orange-50 shadow-sm">
-    <div class="flex items-center justify-between border-b border-amber-100 bg-amber-50/70 px-5 py-4 sm:px-6">
-      <div>
-        <h3 class="font-serif text-lg font-bold text-navy">Recent Orders</h3>
-        <p class="mt-0.5 text-[12px] text-gray-500">Review order details, status, and receipts.</p>
-      </div>
-      <a href="{% url 'customers:orders' %}"
-         class="text-[12px] font-semibold text-navy transition hover:underline">
-        View All
-      </a>
-    </div>
-
-    <div class="overflow-x-auto bg-white/90 px-5 py-2 sm:px-6">
-      <table class="w-full min-w-[760px] text-left text-sm">
-        <thead>
-          <tr class="border-b border-gray-200 text-[11px] font-semibold uppercase tracking-[0.10em] text-gray-500">
-            <th class="py-3 pr-4">Order ID</th>
-            <th class="py-3 pr-4">Item</th>
-            <th class="py-3 pr-4">Shop</th>
-            <th class="py-3 pr-4">Date</th>
-            <th class="py-3 pr-4">Status</th>
-            <th class="py-3 text-center">Receipt</th>
-          </tr>
-        </thead>
-
-        <tbody class="divide-y divide-gray-100">
-          {% for order in recent_orders %}
-          <tr class="transition-colors hover:bg-gray-50/70">
-            <td class="whitespace-nowrap py-4 pr-4">
-              <a href="{% url 'customers:orders' %}" class="font-semibold text-navy hover:underline">
-                {{ order.order_id }}
-              </a>
-            </td>
-
-            <td class="py-4 pr-4 font-medium text-gray-700">{{ order.product_name }}</td>
-            <td class="py-4 pr-4 text-gray-500">{{ order.shop_name }}</td>
-            <td class="whitespace-nowrap py-4 pr-4 text-gray-500">{{ order.date }}</td>
-
-            <td class="py-4 pr-4">
-              <span class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em]
-                {% if order.status == 'Pending' %}
-                  bg-amber-100 text-amber-800
-                {% elif order.status == 'Delivered' %}
-                  bg-emerald-100 text-emerald-800
-                {% else %}
-                  bg-blue-100 text-blue-800
-                {% endif %}">
-                {{ order.status }}
-              </span>
-            </td>
-
-            <td class="py-4 text-center">
-              <a href="{% url 'customers:download_receipt' order.order_id %}"
-                 class="inline-grid h-9 w-9 place-items-center rounded-lg border border-gray-200 bg-white text-navy transition-all hover:-translate-y-0.5 hover:bg-gray-50 hover:shadow-sm"
-                 title="Download PDF Receipt"
-                 aria-label="Download receipt for {{ order.order_id }}">
+            <a href="{% url 'core:marketplace' %}"
+               class="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-lg bg-white px-4 py-2.5 text-[13px] font-semibold text-navy shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 sm:self-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line>
+                    <path d="M5 12h14"></path><path d="M12 5v14"></path>
                 </svg>
-              </a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="6" class="py-12 text-center">
-              <div class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-gray-100 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line>
-                </svg>
-              </div>
-              <p class="mt-3 text-[13px] font-medium text-gray-500">No recent orders found.</p>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
+                New Order
+            </a>
+        </div>
+    </section>
+
+    <!-- ===================== KPI CARDS ===================== -->
+    <section class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+
+        <!-- Active Orders -->
+        <div class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="flex items-start justify-between gap-3">
+                <div>
+                    <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Active Orders</div>
+                    <div class="mt-2 font-serif text-3xl font-bold text-navy">{{ active_count|default:0 }}</div>
+                    <div class="mt-1 text-[12px] text-gray-400">Currently in progress</div>
+                </div>
+                <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="m9 11 3 3L22 4"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saved Profiles -->
+        <div class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="flex items-start justify-between gap-3">
+                <div>
+                    <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Saved Profiles</div>
+                    <div class="mt-2 font-serif text-3xl font-bold text-navy">3</div>
+                    <div class="mt-1 text-[12px] text-gray-400">Ready for ordering</div>
+                </div>
+                <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed -->
+        <div class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="flex items-start justify-between gap-3">
+                <div>
+                    <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Completed</div>
+                    <div class="mt-2 font-serif text-3xl font-bold text-navy">{{ completed_count|default:0 }}</div>
+                    <div class="mt-1 text-[12px] text-gray-400">Delivered orders</div>
+                </div>
+                <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Spent -->
+        <div class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="flex items-start justify-between gap-3">
+                <div>
+                    <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Total Spent</div>
+                    <div class="mt-2 font-serif text-3xl font-bold text-navy">${{ total_spent|default:0 }}</div>
+                    <div class="mt-1 text-[12px] text-gray-400">Across all orders</div>
+                </div>
+                <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-slate-100 text-navy">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 7V5a2 2 0 0 0-2-2H5a3 3 0 0 0 0 6h15v10a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V6"></path><path d="M16 13h4"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== FEATURED ACTIVE ORDER ===================== -->
+    {% if active_orders %}
+    {% with active=active_orders.0 %}
+    <section class="overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-indigo-50 shadow-sm">
+
+        <!-- Order header -->
+        <div class="border-b border-blue-100 bg-blue-50/70 px-5 py-4 sm:px-6">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">Active Order</span>
+                        <span class="text-gray-300">•</span>
+                        <span class="text-[12px] font-semibold text-navy">{{ active.order_id }}</span>
+                    </div>
+
+                    <h3 class="mt-1 truncate font-serif text-lg font-bold text-navy sm:text-xl">
+                        {{ active.product_name }}
+                    </h3>
+                    <p class="mt-1 text-[13px] text-gray-500">Tailored by {{ active.shop_name }}</p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em]
+                        {% if active.status == 'Pending' %}
+                            bg-amber-100 text-amber-800
+                        {% elif active.status == 'Accepted' %}
+                            bg-blue-100 text-blue-800
+                        {% elif active.status == 'In Production' %}
+                            bg-purple-100 text-purple-800
+                        {% elif active.status == 'Ready' %}
+                            bg-emerald-100 text-emerald-800
+                        {% elif active.status == 'Delivered' %}
+                            bg-green-100 text-green-800
+                        {% else %}
+                            bg-gray-100 text-gray-700
+                        {% endif %}">
+                        {{ active.status }}
+                    </span>
+                    <a href="{% url 'customers:order_tracking' active.order_id %}"
+                       class="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-[12px] font-semibold text-navy shadow-sm transition hover:bg-gray-50">
+                        Track Order
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="px-5 py-6 sm:px-6">
+            <div class="mb-4">
+                <div class="text-[13px] font-semibold text-navy">Production Progress</div>
+                <div class="mt-0.5 text-[12px] text-gray-500">Follow each tailoring stage as your order moves forward.</div>
+            </div>
+
+            <div class="rounded-xl border border-blue-100 bg-white/90 p-4 shadow-inner sm:p-5">
+                <div class="overflow-x-auto pb-1">
+                    <div class="min-w-[560px]">
+                        <div class="relative grid grid-cols-5 gap-2">
+
+                            <!-- Connector -->
+                            <div class="absolute left-[10%] right-[10%] top-4 h-[2px] bg-gray-200"></div>
+
+                            <!-- 1 PLACED -->
+                            <div class="relative z-10 text-center">
+                                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full bg-navy text-white text-[12px] font-bold ring-4 ring-gray-50">
+                                    1
+                                </div>
+                                <div class="mt-2 text-[11px] font-semibold text-navy">
+                                    Placed
+                                </div>
+                            </div>
+
+                            <!-- 2 ACCEPTED -->
+                            <div class="relative z-10 text-center">
+                                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full text-[12px] font-bold ring-4 ring-gray-50
+                                    {% if active.status == 'Accepted' or active.status == 'In Production' or active.status == 'Ready' or active.status == 'Delivered' %}
+                                        bg-navy text-white
+                                    {% else %}
+                                        bg-gray-200 text-gray-500
+                                    {% endif %}">
+                                    2
+                                </div>
+                                <div class="mt-2 text-[11px]
+                                    {% if active.status == 'Accepted' or active.status == 'In Production' or active.status == 'Ready' or active.status == 'Delivered' %}
+                                        text-navy font-semibold
+                                    {% else %}
+                                        text-gray-400
+                                    {% endif %}">
+                                    Accepted
+                                </div>
+                            </div>
+
+                            <!-- 3 PRODUCTION -->
+                            <div class="relative z-10 text-center">
+                                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full text-[12px] font-bold ring-4 ring-gray-50
+                                    {% if active.status == 'In Production' or active.status == 'Ready' or active.status == 'Delivered' %}
+                                        bg-navy text-white
+                                    {% else %}
+                                        bg-gray-200 text-gray-500
+                                    {% endif %}">
+                                    3
+                                </div>
+                                <div class="mt-2 text-[11px]
+                                    {% if active.status == 'In Production' or active.status == 'Ready' or active.status == 'Delivered' %}
+                                        text-navy font-semibold
+                                    {% else %}
+                                        text-gray-400
+                                    {% endif %}">
+                                    Production
+                                </div>
+                            </div>
+
+                            <!-- 4 READY -->
+                            <div class="relative z-10 text-center">
+                                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full text-[12px] font-bold ring-4 ring-gray-50
+                                    {% if active.status == 'Ready' or active.status == 'Delivered' %}
+                                        bg-navy text-white
+                                    {% else %}
+                                        bg-gray-200 text-gray-500
+                                    {% endif %}">
+                                    4
+                                </div>
+                                <div class="mt-2 text-[11px]
+                                    {% if active.status == 'Ready' or active.status == 'Delivered' %}
+                                        text-navy font-semibold
+                                    {% else %}
+                                        text-gray-400
+                                    {% endif %}">
+                                    Ready
+                                </div>
+                            </div>
+
+                            <!-- 5 DELIVERED -->
+                            <div class="relative z-10 text-center">
+                                <div class="mx-auto grid h-8 w-8 place-items-center rounded-full text-[12px] font-bold ring-4 ring-gray-50
+                                    {% if active.status == 'Delivered' %}
+                                        bg-emerald-600 text-white
+                                    {% else %}
+                                        bg-gray-200 text-gray-500
+                                    {% endif %}">
+                                    5
+                                </div>
+                                <div class="mt-2 text-[11px]
+                                    {% if active.status == 'Delivered' %}
+                                        text-emerald-700 font-semibold
+                                    {% else %}
+                                        text-gray-400
+                                    {% endif %}">
+                                    Delivered
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endwith %}
+    {% endif %}
+
+    <!-- ===================== RECENT ORDERS ===================== -->
+    <section class="overflow-hidden rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 via-white to-orange-50 shadow-sm">
+        <div class="flex items-center justify-between border-b border-amber-100 bg-amber-50/70 px-5 py-4 sm:px-6">
+            <div>
+                <h3 class="font-serif text-lg font-bold text-navy">Recent Orders</h3>
+                <p class="mt-0.5 text-[12px] text-gray-500">Review order details, status, and receipts.</p>
+            </div>
+            <a href="{% url 'customers:orders' %}"
+               class="text-[12px] font-semibold text-navy transition hover:underline">
+                View All
+            </a>
+        </div>
+
+        <div class="overflow-x-auto bg-white/90 px-5 py-2 sm:px-6">
+            <table class="w-full min-w-[760px] text-left text-sm">
+                <thead>
+                    <tr class="border-b border-gray-200 text-[11px] font-semibold uppercase tracking-[0.10em] text-gray-500">
+                        <th class="py-3 pr-4">Order ID</th>
+                        <th class="py-3 pr-4">Item</th>
+                        <th class="py-3 pr-4">Shop</th>
+                        <th class="py-3 pr-4">Date</th>
+                        <th class="py-3 pr-4">Status</th>
+                        <th class="py-3 text-center">Receipt</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-100">
+                    {% for order in recent_orders %}
+                    <tr class="transition-colors hover:bg-gray-50/70">
+                        <td class="whitespace-nowrap py-4 pr-4">
+                            <a href="{% url 'customers:orders' %}" class="font-semibold text-navy hover:underline">
+                                {{ order.order_id }}
+                            </a>
+                        </td>
+
+                        <td class="py-4 pr-4 font-medium text-gray-700">{{ order.product_name }}</td>
+                        <td class="py-4 pr-4 text-gray-500">{{ order.shop_name }}</td>
+                        <td class="whitespace-nowrap py-4 pr-4 text-gray-500">{{ order.date }}</td>
+
+                        <td class="py-4 pr-4">
+                            <span class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em]
+                                {% if order.status == 'Pending' %}
+                                    bg-amber-100 text-amber-800
+                                {% elif order.status == 'Delivered' %}
+                                    bg-emerald-100 text-emerald-800
+                                {% else %}
+                                    bg-blue-100 text-blue-800
+                                {% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+
+                        <td class="py-4 text-center">
+                            <a href="{% url 'customers:download_receipt' order.order_id %}"
+                               class="inline-grid h-9 w-9 place-items-center rounded-lg border border-gray-200 bg-white text-navy transition-all hover:-translate-y-0.5 hover:bg-gray-50 hover:shadow-sm"
+                               title="Download PDF Receipt"
+                               aria-label="Download receipt for {{ order.order_id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="py-12 text-center">
+                            <div class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-gray-100 text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line>
+                                </svg>
+                            </div>
+                            <p class="mt-3 text-[13px] font-medium text-gray-500">No recent orders found.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
 
 </div>
 {% endblock %}

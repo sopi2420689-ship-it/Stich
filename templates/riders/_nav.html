@@ -1,0 +1,90 @@
+<nav class="bg-navy rounded-xl px-4 py-3 mb-6 shadow-sm">
+
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+        <div class="flex items-center gap-3">
+
+            <div class="w-9 h-9 rounded-lg bg-gold text-navy
+                        flex items-center justify-center">
+                <i data-lucide="bike" class="w-5 h-5"></i>
+            </div>
+
+            <div>
+                <p class="text-white text-sm font-semibold">
+                    Rider Portal
+                </p>
+
+                <p class="text-white/60 text-[11px]">
+                    StitchSync Delivery
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="flex gap-1 overflow-x-auto">
+
+            <a href="{% url 'riders:dashboard' %}"
+               class="flex items-center gap-2 px-4 py-2 rounded-lg
+               text-sm whitespace-nowrap transition
+
+               {% if request.resolver_match.url_name == 'dashboard' %}
+                   bg-white/10 text-white border-b-2 border-gold
+               {% else %}
+                   text-white/70 hover:text-white hover:bg-white/10
+               {% endif %}">
+
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                Dashboard
+            </a>
+
+
+            <a href="{% url 'riders:jobs' %}"
+               class="flex items-center gap-2 px-4 py-2 rounded-lg
+               text-sm whitespace-nowrap transition
+
+               {% if request.resolver_match.url_name == 'jobs' or request.resolver_match.url_name == 'job_detail' %}
+                   bg-white/10 text-white border-b-2 border-gold
+               {% else %}
+                   text-white/70 hover:text-white hover:bg-white/10
+               {% endif %}">
+
+                <i data-lucide="package" class="w-4 h-4"></i>
+                Jobs
+            </a>
+
+
+            <a href="{% url 'riders:history' %}"
+               class="flex items-center gap-2 px-4 py-2 rounded-lg
+               text-sm whitespace-nowrap transition
+
+               {% if request.resolver_match.url_name == 'history' %}
+                   bg-white/10 text-white border-b-2 border-gold
+               {% else %}
+                   text-white/70 hover:text-white hover:bg-white/10
+               {% endif %}">
+
+                <i data-lucide="history" class="w-4 h-4"></i>
+                History
+            </a>
+
+
+            <a href="{% url 'riders:profile' %}"
+               class="flex items-center gap-2 px-4 py-2 rounded-lg
+               text-sm whitespace-nowrap transition
+
+               {% if request.resolver_match.url_name == 'profile' %}
+                   bg-white/10 text-white border-b-2 border-gold
+               {% else %}
+                   text-white/70 hover:text-white hover:bg-white/10
+               {% endif %}">
+
+                <i data-lucide="user-round" class="w-4 h-4"></i>
+                Profile
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>

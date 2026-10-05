@@ -1,15 +1,394 @@
-{% extends 'base/base.html' %}
+{% extends "tailors/base.html" %}
 
-{% block title %}Tailor Dashboard | StitchSync{% endblock %}
+{% block title %}
+Shop Dashboard | StitchSync
+{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto py-12 px-4 text-center">
-    <h1 class="text-3xl font-bold font-serif text-navy mb-4">Welcome, {{ user.username }}!</h1>
-    <p class="text-gray-500 mb-8">Your full Tailor Dashboard is coming soon.</p>
-    
-    <!-- Emergency Logout Button -->
-    <a href="{% url 'core:logout' %}" class="bg-red-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600 transition">
-        Log Out
-    </a>
+
+<div class="min-h-screen bg-[#f8f9fb]">
+  <!-- ===================================================== -->
+  <!-- DASHBOARD CONTENT -->
+  <!-- ===================================================== -->
+
+  <main class="max-w-[1400px] mx-auto px-6 lg:px-8 py-10">
+    <!-- ================================================= -->
+    <!-- PAGE TITLE -->
+    <!-- ================================================= -->
+
+    <div class="mb-8">
+      <h1 class="text-4xl font-serif font-bold text-[#0A192F]">
+        Shop Dashboard
+      </h1>
+
+      {% if shop %}
+      <p class="text-[#64748b] text-lg mt-2">{{ shop.name }}</p>
+      {% else %}
+      <p class="text-[#64748b] text-lg mt-2">{{ request.user.username }}</p>
+      {% endif %}
+    </div>
+
+    <!-- ================================================= -->
+    <!-- APPROVAL STATUS -->
+    <!-- ================================================= -->
+
+    <div
+      class="mb-8 rounded-2xl border px-6 py-5 flex items-center gap-4 {% if approval_status == 'Approved' %} bg-[#e5f7f2] border-[#8adfc9] {% elif approval_status == 'Rejected' %} bg-red-50 border-red-200 {% else %} bg-yellow-50 border-yellow-200 {% endif %}"
+    >
+      <!-- Icon -->
+
+      <div
+        class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 {% if approval_status == 'Approved' %} text-[#00b686] {% elif approval_status == 'Rejected' %} text-red-500 {% else %} text-yellow-600 {% endif %}"
+      >
+        {% if approval_status == "Approved" %}
+
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 12l2 2 4-4"
+          />
+          <circle cx="12" cy="12" r="9" />
+        </svg>
+
+        {% elif approval_status == "Rejected" %}
+
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <path stroke-linecap="round" d="M9 9l6 6M15 9l-6 6" />
+        </svg>
+
+        {% else %}
+
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <path stroke-linecap="round" d="M12 7v5l3 2" />
+        </svg>
+
+        {% endif %}
+      </div>
+
+      <!-- Text -->
+
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-[#0A192F] font-medium text-lg">
+          Admin Approval Status:
+        </span>
+
+        <span
+          class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase {% if approval_status == 'Approved' %} bg-[#c6eee2] text-[#00a878] {% elif approval_status == 'Rejected' %} bg-red-100 text-red-600 {% else %} bg-yellow-100 text-yellow-700 {% endif %}"
+        >
+          {{ approval_status }}
+        </span>
+      </div>
+    </div>
+
+    <!-- ================================================= -->
+    <!-- STATISTICS -->
+    <!-- ================================================= -->
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+      <!-- REVENUE -->
+
+      <div
+        class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 min-h-[150px] flex items-center justify-between"
+      >
+        <div>
+          <p class="text-[#64748b] text-base mb-4">Revenue (delivered)</p>
+
+          <h2 class="text-4xl font-serif font-bold text-[#0A192F]">
+            ${{ revenue }}
+          </h2>
+        </div>
+
+        <div
+          class="w-14 h-14 rounded-2xl bg-[#dff6ef] flex items-center justify-center"
+        >
+          <span class="text-3xl text-[#00b686]"> $ </span>
+        </div>
+      </div>
+
+      <!-- PENDING ORDERS -->
+
+      <div
+        class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 min-h-[150px] flex items-center justify-between"
+      >
+        <div>
+          <p class="text-[#64748b] text-base mb-4">Pending Orders</p>
+
+          <h2 class="text-4xl font-serif font-bold text-[#0A192F]">
+            {{ pending_count }}
+          </h2>
+        </div>
+
+        <div
+          class="w-14 h-14 rounded-2xl bg-[#fff1d8] flex items-center justify-center"
+        >
+          <svg
+            class="w-7 h-7 text-[#f2a000]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path stroke-linecap="round" d="M12 7v5l3 2" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- PRODUCTION -->
+
+      <div
+        class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 min-h-[150px] flex items-center justify-between"
+      >
+        <div>
+          <p class="text-[#64748b] text-base mb-4">In Production</p>
+
+          <h2 class="text-4xl font-serif font-bold text-[#0A192F]">
+            {{ production_count }}
+          </h2>
+        </div>
+
+        <div
+          class="w-14 h-14 rounded-2xl bg-[#e4edff] flex items-center justify-center"
+        >
+          <svg
+            class="w-7 h-7 text-[#4d8bf5]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M7 7h4v4H7zM13 13h4v4h-4zM13 7h4v4h-4zM7 13h4v4H7z"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <!-- MESSAGES -->
+
+      <div
+        class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 min-h-[150px] flex items-center justify-between"
+      >
+        <div>
+          <p class="text-[#64748b] text-base mb-4">Unread Messages</p>
+
+          <h2 class="text-4xl font-serif font-bold text-[#0A192F]">
+            {{ unread_messages }}
+          </h2>
+        </div>
+
+        <div
+          class="w-14 h-14 rounded-2xl bg-[#0A192F] flex items-center justify-center"
+        >
+          <svg
+            class="w-7 h-7 text-[#D4AF37]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 5h16v11H8l-4 4V5z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================= -->
+    <!-- NEW ORDER REQUESTS -->
+    <!-- ================================================= -->
+
+    <section
+      class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+    >
+      <!-- Header -->
+
+      <div
+        class="px-7 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+      >
+        <h2 class="text-2xl font-serif font-semibold text-[#0A192F]">
+          New Order Requests
+        </h2>
+
+        <!-- Don't connect this yet until orders page exists -->
+
+        <a
+          href="{% url 'tailors:orders' %}"
+          class="text-sm font-semibold text-[#0A192F] hover:text-[#D4AF37] transition"
+        >
+          View all orders
+        </a>
+      </div>
+
+      <!-- Table -->
+
+      <div class="overflow-x-auto px-7 pb-7">
+        <table class="w-full min-w-[850px]">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th class="text-left py-4 text-sm font-medium text-[#64748b]">
+                Order ID
+              </th>
+
+              <th class="text-left py-4 text-sm font-medium text-[#64748b]">
+                Item
+              </th>
+
+              <th class="text-left py-4 text-sm font-medium text-[#64748b]">
+                Customer
+              </th>
+
+              <th class="text-left py-4 text-sm font-medium text-[#64748b]">
+                Fabric
+              </th>
+
+              <th class="text-left py-4 text-sm font-medium text-[#64748b]">
+                Trial
+              </th>
+
+              <th class="text-left py-4 text-sm font-medium text-[#64748b]">
+                Action
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for order in new_orders %}
+
+            <tr class="border-b border-gray-100 last:border-0">
+              <!-- ORDER ID -->
+
+              <td class="py-5">
+                <span class="font-semibold text-[#0A192F]">
+                  {{ order.order_id }}
+                </span>
+              </td>
+
+              <!-- ITEM -->
+
+              <td class="py-5 text-[#334155]">{{ order.product_name }}</td>
+
+              <!-- CUSTOMER -->
+
+              <td class="py-5 text-[#334155]">{{ order.customer_name }}</td>
+
+              <!-- FABRIC -->
+
+              <td class="py-5">
+                {% if order.fabric_source == "own" %}
+
+                <span
+                  class="inline-flex px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold"
+                >
+                  Own Fabric
+                </span>
+
+                {% else %}
+
+                <span
+                  class="inline-flex px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold"
+                >
+                  Shop Fabric
+                </span>
+
+                {% endif %}
+              </td>
+
+              <!-- TRIAL -->
+
+              <td class="py-5">
+                {% if order.trial_requested %}
+
+                <span
+                  class="inline-flex px-3 py-1 rounded-full bg-green-50 text-green-600 text-xs font-semibold"
+                >
+                  Yes
+                </span>
+
+                {% else %}
+
+                <span class="text-gray-400 text-sm"> No </span>
+
+                {% endif %}
+              </td>
+
+              <!-- ACTION -->
+
+              <td class="py-5">
+                <a
+                  href="{% url 'tailors:order_detail' order.pk %}"
+                  class="inline-flex px-4 py-2 rounded-lg bg-[#0A192F] text-white text-sm font-semibold hover:bg-[#142b4c] transition"
+                >
+                  View
+                </a>
+              </td>
+            </tr>
+
+            {% empty %}
+
+            <tr>
+              <td colspan="6" class="py-10 text-center">
+                <div class="flex flex-col items-center">
+                  <div
+                    class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4"
+                  >
+                    <svg
+                      class="w-7 h-7 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 5h6M9 3h6M7 5h10v16H7z"
+                      />
+
+                      <path
+                        stroke-linecap="round"
+                        d="M10 10h4M10 14h4M10 18h4"
+                      />
+                    </svg>
+                  </div>
+
+                  <p class="text-[#64748b] text-base">No new requests.</p>
+                </div>
+              </td>
+            </tr>
+
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 </div>
+
 {% endblock %}

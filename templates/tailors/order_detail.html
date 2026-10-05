@@ -1,0 +1,1087 @@
+{% extends "tailors/base.html" %}
+
+{% block title %}
+Order {{ order.order_id }} | StitchSync
+{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="max-w-7xl mx-auto">
+
+        <!-- =====================================================
+             BACK + HEADER
+        ====================================================== -->
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+
+            <div>
+
+                <a
+                    href="{% url 'tailors:orders' %}"
+                    class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#0A192F]"
+                >
+                    ← Back to Orders
+                </a>
+
+                <h1 class="text-2xl sm:text-3xl font-serif font-bold text-[#0A192F] mt-3">
+                    Order {{ order.order_id }}
+                </h1>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    {{ order.customer_name }} · {{ order.product_name }}
+                </p>
+
+            </div>
+
+
+            <!-- ORDER STATUS -->
+
+            <div>
+
+                {% if order.status == "Pending" %}
+
+                    <span class="inline-flex px-4 py-2 rounded-full
+                                 bg-amber-50 text-amber-700
+                                 border border-amber-200
+                                 text-xs font-semibold">
+                        Pending
+                    </span>
+
+                {% elif order.status == "Accepted" %}
+
+                    <span class="inline-flex px-4 py-2 rounded-full
+                                 bg-blue-50 text-blue-700
+                                 border border-blue-200
+                                 text-xs font-semibold">
+                        Accepted
+                    </span>
+
+                {% elif order.status == "In Production" %}
+
+                    <span class="inline-flex px-4 py-2 rounded-full
+                                 bg-purple-50 text-purple-700
+                                 border border-purple-200
+                                 text-xs font-semibold">
+                        In Production
+                    </span>
+
+                {% elif order.status == "Ready" %}
+
+                    <span class="inline-flex px-4 py-2 rounded-full
+                                 bg-emerald-50 text-emerald-700
+                                 border border-emerald-200
+                                 text-xs font-semibold">
+                        Ready
+                    </span>
+
+                {% elif order.status == "Delivered" %}
+
+                    <span class="inline-flex px-4 py-2 rounded-full
+                                 bg-green-50 text-green-700
+                                 border border-green-200
+                                 text-xs font-semibold">
+                        Delivered
+                    </span>
+
+                {% elif order.status == "Cancelled" %}
+
+                    <span class="inline-flex px-4 py-2 rounded-full
+                                 bg-red-50 text-red-700
+                                 border border-red-200
+                                 text-xs font-semibold">
+                        Cancelled
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             DJANGO MESSAGES
+        ====================================================== -->
+
+        {% for message in messages %}
+
+            <div class="mb-4 rounded-xl border px-4 py-3 text-sm
+
+                {% if message.tags == 'success' %}
+                    bg-green-50 border-green-200 text-green-700
+
+                {% elif message.tags == 'error' %}
+                    bg-red-50 border-red-200 text-red-700
+
+                {% else %}
+                    bg-amber-50 border-amber-200 text-amber-700
+                {% endif %}
+            ">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+
+        <!-- =====================================================
+             MAIN GRID
+        ====================================================== -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+
+            <!-- =================================================
+                 LEFT SIDE
+            ================================================== -->
+
+            <div class="lg:col-span-2 space-y-6">
+
+
+                <!-- CUSTOMER -->
+
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-blue-50
+                                    flex items-center justify-center">
+
+                            <i data-lucide="user-round"
+                               class="w-5 h-5 text-blue-600"></i>
+
+                        </div>
+
+                        <h2 class="text-base font-bold text-[#0A192F]">
+                            Customer Information
+                        </h2>
+
+                    </div>
+
+
+                    <div class="grid sm:grid-cols-2 gap-5">
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Customer Name
+                            </p>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                {{ order.customer_name }}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Phone
+                            </p>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                {{ order.phone|default:"N/A" }}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Account
+                            </p>
+
+                            <p class="text-sm font-semibold text-gray-700">
+
+                                {% if order.user %}
+
+                                    {{ order.user.get_full_name|default:order.user.username }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Order Date
+                            </p>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                {{ order.date|date:"d M Y" }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ORDER INFORMATION -->
+
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-amber-50
+                                    flex items-center justify-center">
+
+                            <i data-lucide="package"
+                               class="w-5 h-5 text-amber-600"></i>
+
+                        </div>
+
+                        <h2 class="text-base font-bold text-[#0A192F]">
+                            Order Information
+                        </h2>
+
+                    </div>
+
+
+                    <div class="grid sm:grid-cols-2 gap-5">
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Order ID
+                            </p>
+
+                            <p class="text-sm font-semibold text-[#0A192F]">
+                                {{ order.order_id }}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Product
+                            </p>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                {{ order.product_name }}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Tailor Shop
+                            </p>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                {{ order.shop_name }}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Total Price
+                            </p>
+
+                            <p class="text-lg font-bold text-[#0A192F]">
+                                ৳{{ order.total_price }}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Fabric Source
+                            </p>
+
+                            {% if order.fabric_source == "own" %}
+
+                                <span class="inline-flex px-3 py-1 rounded-full
+                                             bg-blue-50 text-blue-700
+                                             text-xs font-semibold">
+                                    Customer Fabric
+                                </span>
+
+                            {% else %}
+
+                                <span class="inline-flex px-3 py-1 rounded-full
+                                             bg-gray-100 text-gray-600
+                                             text-xs font-semibold">
+                                    Shop Fabric
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs text-gray-400 mb-1">
+                                Fitting Trial
+                            </p>
+
+                            <p class="text-sm font-semibold text-gray-700">
+
+                                {% if order.trial_requested %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if order.fabric_source == "own" and order.pickup_address %}
+
+                        <div class="mt-5 bg-gray-50 rounded-xl p-4">
+
+                            <p class="text-xs text-gray-400">
+                                Fabric Pickup Address
+                            </p>
+
+                            <p class="text-sm font-medium text-gray-700 mt-1">
+                                {{ order.pickup_address }}
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     MEASUREMENTS
+                ================================================== -->
+
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-purple-50
+                                    flex items-center justify-center">
+
+                            <i data-lucide="ruler"
+                               class="w-5 h-5 text-purple-600"></i>
+
+                        </div>
+
+                        <h2 class="text-base font-bold text-[#0A192F]">
+                            Measurement Profile
+                        </h2>
+
+                    </div>
+
+
+                    {% if order.measurement_profile %}
+
+                        <div class="grid sm:grid-cols-3 gap-4 mb-5">
+
+                            <div class="bg-gray-50 rounded-xl p-4">
+
+                                <p class="text-xs text-gray-400">
+                                    Profile
+                                </p>
+
+                                <p class="text-sm font-semibold text-[#0A192F] mt-1">
+                                    {{ order.measurement_profile.name }}
+                                </p>
+
+                            </div>
+
+
+                            <div class="bg-gray-50 rounded-xl p-4">
+
+                                <p class="text-xs text-gray-400">
+                                    Gender
+                                </p>
+
+                                <p class="text-sm font-semibold text-[#0A192F] mt-1">
+                                    {{ order.measurement_profile.gender }}
+                                </p>
+
+                            </div>
+
+
+                            <div class="bg-gray-50 rounded-xl p-4">
+
+                                <p class="text-xs text-gray-400">
+                                    Category
+                                </p>
+
+                                <p class="text-sm font-semibold text-[#0A192F] mt-1">
+                                    {{ order.measurement_profile.category }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        {% if order.measurement_profile.values %}
+
+                            <div>
+
+                                <p class="text-xs font-semibold text-gray-500 mb-3">
+                                    Measurements
+                                </p>
+
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+
+                                    {% for key, value in order.measurement_profile.values.items %}
+
+                                        <div class="border border-gray-200 rounded-xl p-4">
+
+                                            <p class="text-[11px] text-gray-400">
+                                                {{ key }}
+                                            </p>
+
+                                            <p class="text-sm font-bold text-[#0A192F] mt-1">
+                                                {{ value }}
+                                            </p>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        {% else %}
+
+                            <p class="text-sm text-gray-400">
+                                No measurements have been entered.
+                            </p>
+
+                        {% endif %}
+
+
+                    {% else %}
+
+                        <div class="bg-gray-50 rounded-xl p-5 text-sm text-gray-500">
+                            No measurement profile attached to this order.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT SIDE
+            ================================================== -->
+
+            <div class="space-y-6">
+
+
+                <!-- =================================================
+                     FABRIC PICKUP / RIDER
+                ================================================== -->
+
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-amber-50
+                                    flex items-center justify-center">
+
+                            <i data-lucide="bike"
+                               class="w-5 h-5 text-amber-600"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="text-base font-bold text-[#0A192F]">
+                                Rider Assignment
+                            </h2>
+
+                            <p class="text-xs text-gray-400 mt-1">
+                                Pickup and delivery rider
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if rider_job and rider_job.rider %}
+
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+
+                            <p class="text-xs text-green-600 font-semibold">
+                                Assigned Rider
+                            </p>
+
+                            <p class="text-sm font-bold text-green-800 mt-1">
+
+                                {{ rider_job.rider.get_full_name|default:rider_job.rider.email }}
+
+                            </p>
+
+
+                            {% if rider_job.rider.profile.vehicle_type %}
+
+                                <p class="text-xs text-green-700 mt-1">
+                                    {{ rider_job.rider.profile.vehicle_type }}
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        {% if order.fabric_source == "own" %}
+
+                            <div class="mt-4">
+
+                                <p class="text-xs text-gray-400">
+                                    Pickup Status
+                                </p>
+
+                                <p class="text-sm font-semibold text-[#0A192F] mt-1">
+                                    {{ order.pickup_status|default:"Pickup Requested" }}
+                                </p>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if order.status != "Delivered" and order.status != "Cancelled" %}
+
+                            <details class="mt-4">
+
+                                <summary class="cursor-pointer text-xs font-semibold text-gray-500">
+                                    Change Rider
+                                </summary>
+
+                                <form method="POST" class="mt-3">
+
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="action"
+                                        value="assign_rider"
+                                    >
+
+
+                                    <select
+                                        name="rider_id"
+                                        required
+                                        class="w-full h-11 rounded-xl
+                                               border border-gray-200
+                                               px-3 text-sm
+                                               outline-none
+                                               focus:border-[#0A192F]"
+                                    >
+
+                                        <option value="">
+                                            Select Rider
+                                        </option>
+
+                                        {% for rider in approved_riders %}
+
+                                            <option value="{{ rider.id }}">
+
+                                                {{ rider.get_full_name|default:rider.email }}
+
+                                                {% if rider.profile.vehicle_type %}
+                                                    — {{ rider.profile.vehicle_type }}
+                                                {% endif %}
+
+                                            </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+
+                                    <button
+                                        type="submit"
+                                        class="w-full mt-3 py-2.5 rounded-xl
+                                               bg-[#0A192F] text-white
+                                               text-sm font-semibold
+                                               hover:bg-[#142b4c]"
+                                    >
+                                        Change Rider
+                                    </button>
+
+                                </form>
+
+                            </details>
+
+                        {% endif %}
+
+
+                    {% else %}
+
+                        {% if order.status != "Cancelled" and order.status != "Delivered" %}
+
+                            <form method="POST">
+
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="action"
+                                    value="assign_rider"
+                                >
+
+
+                                <label class="block text-xs font-semibold text-gray-600 mb-2">
+                                    Select Approved Rider
+                                </label>
+
+
+                                <select
+                                    name="rider_id"
+                                    required
+                                    class="w-full h-11 rounded-xl
+                                           border border-gray-200
+                                           px-3 text-sm
+                                           outline-none
+                                           focus:border-[#0A192F]"
+                                >
+
+                                    <option value="">
+                                        Choose a rider...
+                                    </option>
+
+
+                                    {% for rider in approved_riders %}
+
+                                        <option value="{{ rider.id }}">
+
+                                            {{ rider.get_full_name|default:rider.email }}
+
+                                            {% if rider.profile.vehicle_type %}
+                                                — {{ rider.profile.vehicle_type }}
+                                            {% endif %}
+
+                                        </option>
+
+                                    {% empty %}
+
+                                        <option disabled>
+                                            No approved riders available
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+
+                                <button
+                                    type="submit"
+                                    class="w-full mt-3 py-2.5 rounded-xl
+                                           bg-[#0A192F] text-white
+                                           text-sm font-semibold
+                                           hover:bg-[#142b4c]"
+                                >
+                                    Assign Rider
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <p class="text-sm text-gray-500">
+                                No rider assigned.
+                            </p>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     ORDER ACTIONS
+                ================================================== -->
+
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+
+                    <h2 class="text-base font-bold text-[#0A192F] mb-5">
+                        Manage Order
+                    </h2>
+
+
+                    <!-- PENDING -->
+
+                    {% if order.status == "Pending" %}
+
+                        <div class="space-y-3">
+
+
+                            <form method="POST">
+
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="action"
+                                    value="accept"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="w-full py-3 rounded-xl
+                                           bg-[#0A192F] text-white
+                                           text-sm font-semibold
+                                           hover:bg-[#142b4c]"
+                                >
+                                    ✓ Accept Order
+                                </button>
+
+                            </form>
+
+
+                            <form method="POST">
+
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="action"
+                                    value="reject"
+                                >
+
+                                <button
+                                    type="submit"
+                                    onclick="return confirm('Are you sure you want to reject this order?');"
+                                    class="w-full py-3 rounded-xl
+                                           bg-red-50 text-red-600
+                                           border border-red-200
+                                           text-sm font-semibold
+                                           hover:bg-red-100"
+                                >
+                                    ✕ Reject Order
+                                </button>
+
+                            </form>
+
+                        </div>
+
+
+                    <!-- ACCEPTED -->
+
+                    {% elif order.status == "Accepted" %}
+
+
+                        {% if order.fabric_source == "own" and order.pickup_status != "Fabric Delivered to Tailor Shop" %}
+
+                            <div class="rounded-xl bg-amber-50
+                                        border border-amber-200
+                                        p-4">
+
+                                <p class="text-sm font-semibold text-amber-800">
+                                    Waiting for Fabric
+                                </p>
+
+                                <p class="text-xs text-amber-700 mt-1">
+                                    Customer-owned fabric must be delivered by the Rider before production can start.
+                                </p>
+
+                                <p class="text-xs font-semibold text-amber-800 mt-3">
+                                    Status:
+                                    {{ order.pickup_status|default:"Pickup Requested" }}
+                                </p>
+
+                            </div>
+
+
+                        {% else %}
+
+                            <form method="POST">
+
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="action"
+                                    value="start_production"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="w-full py-3 rounded-xl
+                                           bg-[#0A192F] text-white
+                                           text-sm font-semibold
+                                           hover:bg-[#142b4c]"
+                                >
+                                    Start Production
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+
+                    <!-- IN PRODUCTION -->
+
+                    {% elif order.status == "In Production" %}
+
+                        <form method="POST">
+
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="ready"
+                            >
+
+                            <button
+                                type="submit"
+                                class="w-full py-3 rounded-xl
+                                       bg-emerald-600 text-white
+                                       text-sm font-semibold
+                                       hover:bg-emerald-700"
+                            >
+                                ✓ Mark Ready for Delivery
+                            </button>
+
+                        </form>
+
+
+                    <!-- READY -->
+
+                    {% elif order.status == "Ready" %}
+
+                        <div class="rounded-xl bg-blue-50
+                                    border border-blue-200
+                                    p-4">
+
+                            <p class="text-sm font-semibold text-blue-800">
+                                Ready for Rider Delivery
+                            </p>
+
+                            {% if rider_job and rider_job.rider %}
+
+                                <p class="text-xs text-blue-700 mt-1">
+                                    {{ rider_job.rider.get_full_name|default:rider_job.rider.email }}
+                                    can now start the delivery.
+                                </p>
+
+                            {% else %}
+
+                                <p class="text-xs text-blue-700 mt-1">
+                                    Assign a Rider above so delivery can begin.
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    <!-- DELIVERED -->
+
+                    {% elif order.status == "Delivered" %}
+
+                        <div class="rounded-xl bg-green-50
+                                    border border-green-200
+                                    p-4">
+
+                            <p class="text-sm font-semibold text-green-700">
+                                ✓ Order Delivered
+                            </p>
+
+                            <p class="text-xs text-green-600 mt-1">
+                                Delivery was completed through Rider verification.
+                            </p>
+
+                        </div>
+
+
+                    <!-- CANCELLED -->
+
+                    {% elif order.status == "Cancelled" %}
+
+                        <div class="rounded-xl bg-red-50
+                                    border border-red-200
+                                    p-4">
+
+                            <p class="text-sm font-semibold text-red-700">
+                                Order Cancelled
+                            </p>
+
+                            <p class="text-xs text-red-600 mt-1">
+                                No further actions are available.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     PROGRESS
+                ================================================== -->
+
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+
+                    <h2 class="text-base font-bold text-[#0A192F] mb-5">
+                        Order Progress
+                    </h2>
+
+
+                    <div class="space-y-3">
+
+
+                        <!-- RECEIVED -->
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-8 h-8 rounded-full
+                                        bg-emerald-100 text-emerald-700
+                                        flex items-center justify-center
+                                        text-xs font-bold">
+                                ✓
+                            </div>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                Order Received
+                            </p>
+
+                        </div>
+
+
+                        <div class="h-4 border-l-2 border-gray-200 ml-4"></div>
+
+
+                        <!-- ACCEPTED -->
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center
+                                        text-xs font-bold
+                                        {% if order.status == 'Accepted' or order.status == 'In Production' or order.status == 'Ready' or order.status == 'Delivered' %}
+                                            bg-emerald-100 text-emerald-700
+                                        {% else %}
+                                            bg-gray-100 text-gray-400
+                                        {% endif %}">
+                                2
+                            </div>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                Accepted
+                            </p>
+
+                        </div>
+
+
+                        <div class="h-4 border-l-2 border-gray-200 ml-4"></div>
+
+
+                        <!-- PRODUCTION -->
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center
+                                        text-xs font-bold
+                                        {% if order.status == 'In Production' or order.status == 'Ready' or order.status == 'Delivered' %}
+                                            bg-emerald-100 text-emerald-700
+                                        {% else %}
+                                            bg-gray-100 text-gray-400
+                                        {% endif %}">
+                                3
+                            </div>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                In Production
+                            </p>
+
+                        </div>
+
+
+                        <div class="h-4 border-l-2 border-gray-200 ml-4"></div>
+
+
+                        <!-- READY -->
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center
+                                        text-xs font-bold
+                                        {% if order.status == 'Ready' or order.status == 'Delivered' %}
+                                            bg-emerald-100 text-emerald-700
+                                        {% else %}
+                                            bg-gray-100 text-gray-400
+                                        {% endif %}">
+                                4
+                            </div>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                Ready
+                            </p>
+
+                        </div>
+
+
+                        <div class="h-4 border-l-2 border-gray-200 ml-4"></div>
+
+
+                        <!-- DELIVERED -->
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center
+                                        text-xs font-bold
+                                        {% if order.status == 'Delivered' %}
+                                            bg-emerald-100 text-emerald-700
+                                        {% else %}
+                                            bg-gray-100 text-gray-400
+                                        {% endif %}">
+                                5
+                            </div>
+
+                            <p class="text-sm font-semibold text-gray-700">
+                                Delivered
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

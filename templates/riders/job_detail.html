@@ -1,0 +1,399 @@
+{% extends "riders/base_rider.html" %}
+
+{% block title %}Job {{ job.order.order_id }} | StitchSync{% endblock %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+    {% comment %} {% include "riders/_nav.html" %} {% endcomment %}
+
+
+    <div class="mb-5">
+
+        <a href="{% url 'riders:jobs' %}"
+           class="inline-flex items-center gap-2
+                  text-sm text-gray-500 hover:text-navy">
+
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+
+            Back to Jobs
+
+        </a>
+
+    </div>
+
+
+    {% for message in messages %}
+
+        <div class="mb-4 rounded-lg border px-4 py-3 text-sm
+
+            {% if message.tags == 'success' %}
+                bg-green-50 border-green-200 text-green-700
+
+            {% elif message.tags == 'error' %}
+                bg-red-50 border-red-200 text-red-700
+
+            {% else %}
+                bg-amber-50 border-amber-200 text-amber-700
+            {% endif %}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+
+    <div class="bg-white border border-gray-200
+                rounded-2xl overflow-hidden">
+
+        <!-- TOP -->
+        <div class="p-6 border-b border-gray-100
+                    flex flex-col sm:flex-row
+                    sm:items-center sm:justify-between gap-4">
+
+            <div>
+
+                <p class="text-xs text-gray-400">
+                    Order
+                </p>
+
+                <h1 class="text-2xl font-serif
+                           font-bold text-navy">
+                    {{ job.order.order_id }}
+                </h1>
+
+            </div>
+
+
+            {% if job.delivery_status == "delivered" %}
+
+                <span class="px-3 py-1.5 rounded-full
+                             bg-green-50 text-green-700
+                             text-xs font-semibold">
+                    Delivered
+                </span>
+
+            {% elif job.pickup_required and job.pickup_status != "fabric_delivered" %}
+
+                <span class="px-3 py-1.5 rounded-full
+                             bg-amber-50 text-amber-700
+                             text-xs font-semibold">
+                    {{ job.get_pickup_status_display }}
+                </span>
+
+            {% else %}
+
+                <span class="px-3 py-1.5 rounded-full
+                             bg-blue-50 text-blue-700
+                             text-xs font-semibold">
+                    {{ job.get_delivery_status_display }}
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- INFORMATION -->
+        <div class="grid md:grid-cols-2 gap-4 p-6">
+
+            <!-- CUSTOMER -->
+            <div class="border border-gray-200 rounded-xl p-5">
+
+                <div class="flex items-center gap-2 mb-4">
+
+                    <i data-lucide="user-round"
+                       class="w-5 h-5 text-gold">
+                    </i>
+
+                    <h2 class="font-semibold text-navy">
+                        Customer
+                    </h2>
+
+                </div>
+
+
+                <div class="space-y-3 text-sm">
+
+                    <div class="flex justify-between gap-4">
+                        <span class="text-gray-500">
+                            Name
+                        </span>
+
+                        <strong class="text-gray-800 text-right">
+                            {{ job.order.customer_name }}
+                        </strong>
+                    </div>
+
+
+                    <div class="flex justify-between gap-4">
+                        <span class="text-gray-500">
+                            Phone
+                        </span>
+
+                        <strong class="text-gray-800 text-right">
+                            {{ job.order.phone|default:"N/A" }}
+                        </strong>
+                    </div>
+
+
+                    {% if job.order.pickup_address %}
+
+                        <div class="flex justify-between gap-4">
+                            <span class="text-gray-500">
+                                Pickup Address
+                            </span>
+
+                            <strong class="text-gray-800 text-right">
+                                {{ job.order.pickup_address }}
+                            </strong>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- SHOP -->
+            <div class="border border-gray-200 rounded-xl p-5">
+
+                <div class="flex items-center gap-2 mb-4">
+
+                    <i data-lucide="store"
+                       class="w-5 h-5 text-gold">
+                    </i>
+
+                    <h2 class="font-semibold text-navy">
+                        Tailor Shop
+                    </h2>
+
+                </div>
+
+
+                <div class="space-y-3 text-sm">
+
+                    <div class="flex justify-between gap-4">
+
+                        <span class="text-gray-500">
+                            Shop
+                        </span>
+
+                        <strong class="text-gray-800 text-right">
+                            {{ job.order.shop_name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="flex justify-between gap-4">
+
+                        <span class="text-gray-500">
+                            Garment
+                        </span>
+
+                        <strong class="text-gray-800 text-right">
+                            {{ job.order.product_name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="flex justify-between gap-4">
+
+                        <span class="text-gray-500">
+                            Fabric
+                        </span>
+
+                        <strong class="text-gray-800 text-right">
+                            {{ job.order.fabric_source|default:"N/A"|title }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PICKUP -->
+        {% if job.pickup_required and job.pickup_status != "fabric_delivered" %}
+
+            <div class="p-6 border-t border-gray-100">
+
+                <div class="mb-4">
+
+                    <p class="text-gold text-[11px]
+                              font-bold uppercase tracking-wider">
+                        Pickup
+                    </p>
+
+                    <h2 class="text-xl font-serif
+                               font-bold text-navy mt-1">
+                        Fabric Pickup
+                    </h2>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Current status:
+                        {{ job.get_pickup_status_display }}
+                    </p>
+
+                </div>
+
+
+                <form method="POST"
+                      action="{% url 'riders:pickup_action' job.id %}">
+
+                    {% csrf_token %}
+
+                    <button type="submit"
+                            class="bg-navy text-white
+                                   px-6 py-2.5 rounded-lg
+                                   text-sm font-semibold">
+
+                        {% if job.pickup_status == "pickup_requested" %}
+
+                            Accept Pickup
+
+                        {% elif job.pickup_status == "rider_assigned" %}
+
+                            Mark Fabric Collected
+
+                        {% elif job.pickup_status == "fabric_collected" %}
+
+                            Deliver to Tailor Shop
+
+                        {% endif %}
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- DELIVERY -->
+        {% if job.delivery_required %}
+
+            <div class="p-6 border-t border-gray-100">
+
+                <p class="text-gold text-[11px]
+                          font-bold uppercase tracking-wider">
+                    Delivery
+                </p>
+
+                <h2 class="text-xl font-serif
+                           font-bold text-navy mt-1">
+                    Customer Delivery
+                </h2>
+
+
+                <p class="text-sm text-gray-500 mt-1 mb-5">
+
+                    Status:
+                    {{ job.get_delivery_status_display }}
+
+                </p>
+
+
+                {% if job.delivery_status == "waiting" %}
+
+                    <div class="rounded-lg bg-amber-50
+                                border border-amber-200
+                                px-4 py-3 text-sm text-amber-700">
+
+                        Waiting for the Tailor to mark the
+                        order ready for delivery.
+
+                    </div>
+
+
+                {% elif job.delivery_status == "ready" %}
+
+                    <form method="POST"
+                          action="{% url 'riders:start_delivery' job.id %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="bg-navy text-white
+                                       px-6 py-2.5 rounded-lg
+                                       text-sm font-semibold">
+
+                            Start Delivery
+
+                        </button>
+
+                    </form>
+
+
+                {% elif job.delivery_status == "out_for_delivery" %}
+
+                    <form method="POST"
+                          action="{% url 'riders:verify_delivery' job.id %}"
+                          class="max-w-md">
+
+                        {% csrf_token %}
+
+                        <label class="block text-sm
+                                      font-semibold text-gray-700 mb-2">
+
+                            Customer Delivery OTP
+
+                        </label>
+
+
+                        <input type="text"
+                               name="otp"
+                               maxlength="4"
+                               inputmode="numeric"
+                               placeholder="0000"
+                               required
+                               class="w-full h-12 rounded-lg
+                                      border border-gray-200
+                                      text-center tracking-[0.5em]
+                                      text-lg font-bold outline-none
+                                      focus:border-navy">
+
+
+                        <button type="submit"
+                                class="w-full mt-3
+                                       bg-green-600 text-white
+                                       rounded-lg py-3
+                                       text-sm font-semibold">
+
+                            Verify OTP & Complete Delivery
+
+                        </button>
+
+                    </form>
+
+
+                {% elif job.delivery_status == "delivered" %}
+
+                    <div class="rounded-lg bg-green-50
+                                border border-green-200
+                                px-4 py-3 text-sm text-green-700">
+
+                        ✓ Delivery completed successfully.
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

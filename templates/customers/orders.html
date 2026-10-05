@@ -6,121 +6,181 @@
 {% block content %}
 <div class="max-w-[1200px] mx-auto py-8 px-4 space-y-6">
 
-    <!-- Page Header & Sorting Form Row -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-bold text-navy font-serif">My Orders</h1>
-            <p class="text-gray-500 text-sm mt-1">Track your bespoke tailoring orders and progress in real-time.</p>
-        </div>
-
-        <!-- Sorting Form Dropdown -->
-        <form method="GET" action="" class="flex items-center">
-            <select name="sort" onchange="this.form.submit()" class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-navy shadow-sm focus:outline-none">
-                <option value="newest" {% if selected_sort == 'newest' %}selected{% endif %}>Sort by: Newest First</option>
-                <option value="oldest" {% if selected_sort == 'oldest' %}selected{% endif %}>Sort by: Oldest First</option>
-                <option value="status" {% if selected_sort == 'status' %}selected{% endif %}>Sort by: Status</option>
-            </select>
-        </form>
+  <!-- Page Header & Sorting -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-navy font-serif">My Orders</h1>
+      <p class="text-gray-500 text-sm mt-1">
+        Track your bespoke tailoring orders and progress in real-time.
+      </p>
     </div>
 
-    {% if orders %}
-    <div class="space-y-5">
-        {% for order in orders %}
+    <form method="GET" action="" class="flex items-center">
+      <select
+        name="sort"
+        onchange="this.form.submit()"
+        class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-navy shadow-sm focus:outline-none"
+      >
+        <option value="newest" {% if selected_sort == 'newest' %}selected{% endif %}>
+          Sort by: Newest First
+        </option>
+        <option value="oldest" {% if selected_sort == 'oldest' %}selected{% endif %}>
+          Sort by: Oldest First
+        </option>
+        <option value="status" {% if selected_sort == 'status' %}selected{% endif %}>
+          Sort by: Status
+        </option>
+      </select>
+    </form>
+  </div>
 
-        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+  {% if orders %}
+  <div class="space-y-5">
+    {% for order in orders %}
 
-            <!-- Upper Header Portion -->
-            <div class="px-6 py-4 border-b
-                {% if order.status == 'Pending' %}bg-amber-50 border-amber-100
-                {% elif order.status == 'In Production' %}bg-blue-50 border-blue-100
-                {% elif order.status == 'Delivered' %}bg-emerald-50 border-emerald-100
-                {% else %}bg-gray-50 border-gray-100{% endif %}">
-                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div class="flex flex-wrap items-center gap-2 text-xs">
-                        <span class="font-bold uppercase tracking-wider text-gray-500">Order</span>
-                        <span class="font-semibold text-navy">{{ order.order_id }}</span>
-                        <span class="text-gray-300">•</span>
-                        <span class="text-gray-500">{{ order.date|date:"F j, Y" }}</span>
-                    </div>
+    <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
-                    <div>
-                        {% if order.status == 'Pending' %}
-                            <span class="px-3 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-full uppercase tracking-wider">Pending Approval</span>
-                        {% elif order.status == 'In Production' %}
-                            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-[11px] font-bold rounded-full uppercase tracking-wider">In Production</span>
-                        {% elif order.status == 'Delivered' %}
-                            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full uppercase tracking-wider">Delivered</span>
-                        {% else %}
-                            <span class="px-3 py-1 bg-gray-100 text-gray-700 text-[11px] font-bold rounded-full uppercase tracking-wider">{{ order.status }}</span>
-                        {% endif %}
-                    </div>
-                </div>
+      <!-- Order Header -->
+      <div class="px-6 py-4 border-b {% if order.status == 'Pending' %}bg-amber-50 border-amber-100{% elif order.status == 'Accepted' %}bg-blue-50 border-blue-100{% elif order.status == 'In Production' %}bg-purple-50 border-purple-100{% elif order.status == 'Ready' %}bg-emerald-50 border-emerald-100{% elif order.status == 'Delivered' %}bg-green-50 border-green-100{% else %}bg-gray-50 border-gray-100{% endif %}">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="font-bold uppercase tracking-wider text-gray-500">Order</span>
+            <span class="font-semibold text-navy">{{ order.order_id }}</span>
+            <span class="text-gray-300">•</span>
+            <span class="text-gray-500">{{ order.date|date:"F j, Y" }}</span>
+          </div>
+
+          <div>
+            {% if order.status == 'Pending' %}
+              <span class="px-3 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-full uppercase tracking-wider">Pending</span>
+            {% elif order.status == 'Accepted' %}
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 text-[11px] font-bold rounded-full uppercase tracking-wider">Accepted</span>
+            {% elif order.status == 'In Production' %}
+              <span class="px-3 py-1 bg-purple-100 text-purple-800 text-[11px] font-bold rounded-full uppercase tracking-wider">In Production</span>
+            {% elif order.status == 'Ready' %}
+              <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full uppercase tracking-wider">Ready</span>
+            {% elif order.status == 'Delivered' %}
+              <span class="px-3 py-1 bg-green-100 text-green-800 text-[11px] font-bold rounded-full uppercase tracking-wider">Delivered</span>
+            {% elif order.status == 'Cancelled' %}
+              <span class="px-3 py-1 bg-red-100 text-red-700 text-[11px] font-bold rounded-full uppercase tracking-wider">Cancelled</span>
+            {% else %}
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 text-[11px] font-bold rounded-full uppercase tracking-wider">{{ order.status }}</span>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Order Body -->
+      <div class="bg-white p-6">
+        <div class="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
+
+          <!-- Left -->
+          <div class="space-y-4">
+
+            <div class="pb-4 border-b border-gray-100">
+              <h3 class="font-serif text-xl font-bold text-navy">
+                {{ order.product_name }}
+              </h3>
+              <p class="mt-1 text-sm text-gray-500">
+                Tailored by <span class="font-semibold text-navy">{{ order.shop_name }}</span>
+              </p>
             </div>
 
-            <!-- Lower Body Portion -->
-            <div class="bg-white p-6">
-                <div class="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
+            <div class="grid gap-3 sm:grid-cols-2 rounded-xl border border-gray-100 bg-gray-50 p-4">
 
-                    <!-- Left -->
-                    <div class="space-y-4">
-                        <div class="pb-4 border-b border-gray-100">
-                            <h3 class="font-serif text-xl font-bold text-navy">{{ order.product_name }}</h3>
-                            <p class="mt-1 text-sm text-gray-500">Tailored by <span class="font-semibold text-navy">{{ order.shop_name }}</span></p>
-                        </div>
+              <!-- Fabric Source -->
+              <div>
+                <span class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  Fabric Source
+                </span>
 
-                        <div class="grid gap-3 sm:grid-cols-2 rounded-xl border border-gray-100 bg-gray-50 p-4">
-                            <div>
-                                <span class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-gray-400">Fabric Source</span>
-                                <span class="text-sm font-semibold capitalize text-navy">
-                                    {{ order.fabric_source }} Fabric
-                                    {% if order.fabric_source == 'own' %}
-                                        <span class="font-medium text-violet-600">• Pickup Requested</span>
-                                    {% endif %}
-                                </span>
-                            </div>
-
-                            <div>
-                                <span class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-gray-400">Measurement Profile</span>
-                                <span class="text-sm font-semibold text-navy">{{ order.profile_name_snapshot|default:"Default Sizing Profile" }}</span>
-                            </div>
-                        </div>
+                <div class="text-sm font-semibold text-navy">
+                  {% if order.fabric_source == 'own' %}
+                    Own Fabric
+                    <div class="mt-1 text-xs font-medium text-violet-600 normal-case">
+                      • {{ order.pickup_status|default:"Pickup Requested" }}
                     </div>
-
-                    <!-- Right -->
-                    <div class="min-w-[220px] border-t border-gray-100 pt-4 md:border-l md:border-t-0 md:border-gray-100 md:pl-6 md:pt-0">
-                        <div class="text-left md:text-right">
-                            <span class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Amount</span>
-                            <span class="font-serif text-2xl font-bold text-navy">${{ order.total_price }}</span>
-                        </div>
-
-                        <div class="mt-4 flex flex-col gap-2">
-                            <a href="{% url 'customers:order_tracking' order.order_id %}"
-                               class="rounded-xl bg-navy px-5 py-2.5 text-center text-xs font-semibold text-white transition hover:bg-slate-800">
-                                Track Order
-                            </a>
-
-                            <a href="{% url 'customers:chat' %}"
-                               class="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-center text-xs font-semibold text-navy transition hover:bg-gray-50">
-                                Contact Tailor
-                            </a>
-                        </div>
-                    </div>
-
+                  {% else %}
+                    Shop Fabric
+                  {% endif %}
                 </div>
+              </div>
+
+              <!-- Measurement Profile -->
+              <div>
+                <span class="mb-1 block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  Measurement Profile
+                </span>
+
+                <span class="text-sm font-semibold text-navy">
+                  {{ order.profile_name_snapshot|default:"Default Sizing Profile" }}
+                </span>
+              </div>
+
             </div>
+          </div>
+
+          <!-- Right -->
+          <div class="min-w-[220px] border-t border-gray-100 pt-4 md:border-l md:border-t-0 md:border-gray-100 md:pl-6 md:pt-0">
+
+            <div class="text-left md:text-right">
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                Total Amount
+              </span>
+              <span class="font-serif text-2xl font-bold text-navy">
+                ${{ order.total_price }}
+              </span>
+            </div>
+
+            <div class="mt-4 flex flex-col gap-2">
+              <a
+                href="{% url 'customers:order_tracking' order.order_id %}"
+                class="rounded-xl bg-navy px-5 py-2.5 text-center text-xs font-semibold text-white transition hover:bg-slate-800"
+              >
+                Track Order
+              </a>
+
+              <a
+                href="{% url 'customers:chat' %}"
+                class="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-center text-xs font-semibold text-navy transition hover:bg-gray-50"
+              >
+                Contact Tailor
+              </a>
+            </div>
+
+          </div>
         </div>
+      </div>
 
-        {% endfor %}
     </div>
 
-    {% else %}
-    <div class="bg-white border border-gray-200 rounded-2xl p-12 text-center shadow-sm">
-        <div class="w-12 h-12 mx-auto rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-4">📦</div>
-        <h3 class="text-navy font-bold text-lg mb-2">No active orders yet</h3>
-        <p class="text-gray-500 text-sm mb-6">Explore our marketplace and place your first custom tailored order.</p>
-        <a href="{% url 'core:marketplace' %}" class="inline-block py-3 px-6 bg-navy text-white rounded-xl font-medium hover:bg-slate-800 transition">Browse Marketplace</a>
+    {% endfor %}
+  </div>
+
+  {% else %}
+
+  <div class="bg-white border border-gray-200 rounded-2xl p-12 text-center shadow-sm">
+    <div class="w-12 h-12 mx-auto rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-4">
+      📦
     </div>
-    {% endif %}
+
+    <h3 class="text-navy font-bold text-lg mb-2">No active orders yet</h3>
+
+    <p class="text-gray-500 text-sm mb-6">
+      Explore our marketplace and place your first custom tailored order.
+    </p>
+
+    <a
+      href="{% url 'core:marketplace' %}"
+      class="inline-block py-3 px-6 bg-navy text-white rounded-xl font-medium hover:bg-slate-800 transition"
+    >
+      Browse Marketplace
+    </a>
+  </div>
+
+  {% endif %}
 
 </div>
 {% endblock %}
